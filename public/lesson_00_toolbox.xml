@@ -1,0 +1,14 @@
+<xml xmlns="https://developers.google.com/blockly/xml" id="lesson_00_toolbox" style="display: none">
+  <category name="Logic Gates" colour="#5ba55b">
+    <block type="nand"></block>
+  </category>
+  <category name="Types" colour="#5b80a5">
+    <block type="math_number">
+      <field name="NUM">0</field>
+    </block>
+    <block type="logic_boolean">
+      <field name="BOOL">TRUE</field>
+    </block>
+  </category>
+  <category name="Variables" colour="#a55b80" custom="VARIABLE"></category>
+</xml>

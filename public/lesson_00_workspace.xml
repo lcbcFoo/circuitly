@@ -1,0 +1,16 @@
+<xml xmlns="https://developers.google.com/blockly/xml" id="workspaceBlocks" style="display: none">
+  <variables>
+    <variable id="YW?)DAiT!RpO{xEssqSM">x</variable>
+    <variable id="{H5EkKHI(_dkb:9idCy/">y</variable>
+    <variable id="DxjEaPpg=D-nTk_V=P.8">z</variable>
+  </variables>
+  <block type="procedures_defnoreturn" id="]BDx75QrV-TdXq;q0wY{" x="88" y="162">
+    <mutation>
+      <arg name="x" varid="YW?)DAiT!RpO{xEssqSM"></arg>
+      <arg name="y" varid="{H5EkKHI(_dkb:9idCy/"></arg>
+      <arg name="z" varid="DxjEaPpg=D-nTk_V=P.8"></arg>
+    </mutation>
+    <field name="NAME">AND</field>
+    <comment pinned="false" h="80" w="160">Return Z = X AND Y</comment>
+  </block>
+</xml>
