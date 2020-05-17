@@ -256,7 +256,9 @@ export function load(workspace) {
             code += ';\n'
 
         }
-        code += '\n\n';
+        if (signals.length >= 1) {
+            code += '\n\n';
+        }
         code += statements_implementation + '\n';
         code += 'endmodule';
         return code;
