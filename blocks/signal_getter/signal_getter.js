@@ -11,7 +11,7 @@ export function load(workspace) {
                 .appendField(new Blockly.FieldDropdown(this.makeSignalList.bind(this)),
                     "SIGNAL_NAME");
             this.setInputsInline(true);
-            this.setOutput(true, null);
+            this.setOutput(true, "SIGNAL");
             this.setColour(utils.COLOUR_1BIT);
             this.setTooltip("");
             this.setHelpUrl("");
