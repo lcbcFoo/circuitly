@@ -6,6 +6,7 @@ import { load as signal_getter_load } from './blocks/signal_getter/signal_getter
 import { load as connections_designer_load } from './blocks/connections_designer/connections_designer.js'
 import { load as splitter_loader } from './blocks/splitter/splitter.js'
 import { load as concat_loader } from './blocks/concat/concat.js'
+import { load as NAND_loader } from './blocks/NAND/NAND.js'
 
 //////////////////////////////////////////////////////////////////////////////
 // Blockly setup
@@ -48,85 +49,11 @@ signal_getter_load(workspace);
 connections_designer_load(workspace);
 splitter_loader(workspace);
 concat_loader(workspace);
+NAND_loader(workspace);
 
+// TODO: this should be able to search for logic models in logic directory
+import { load as AND_loader } from './logic/AND/AND.js'
+AND_loader(workspace);
 
 // Load blocks to workspace
 Blockly.Xml.domToWorkspace(workspaceBlocks, workspace);
-
-//////////////////////////////////////////////////////////////////////////////////
-// Logic gates
-//
-
-var temp_counter = 0;
-
-function get_temp_name(name) {
-    var temp = temp_counter;
-    temp_counter = temp_counter + 1;
-    return name + '_' + temp;
-}
-
-Blockly.Blocks['nand'] = {
-    init: function() {
-        this.appendValueInput("in_X")
-            .setCheck(null)
-            .appendField("NAND - in A");
-        this.appendValueInput("in_Y")
-            .setCheck(null)
-            .appendField("in B");
-        this.appendValueInput("out_Z")
-            .setCheck(null)
-            .appendField("out C");
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setColour(90);
-        this.setTooltip("NAND gate. Gives C = A NAND B");
-        this.setHelpUrl("");
-    }
-};
-
-Blockly.Python['nand'] = function(block) {
-    var value_x = Blockly.Python.valueToCode(block, 'in_X', Blockly.Python.ORDER_ATOMIC);
-    var value_y = Blockly.Python.valueToCode(block, 'in_Y', Blockly.Python.ORDER_ATOMIC);
-    var value_z = Blockly.Python.valueToCode(block, 'out_Z', Blockly.Python.ORDER_ATOMIC);
-    // TODO: Assemble Python into code variable.
-    var name = get_temp_name('nand');
-    var code = 'nand ' + name + '(' + value_z + ', ' + value_y + 
-        ', ' + value_x + ');\n';
-    // TODO: Change ORDER_NONE to the correct strength.
-    return code;
-}
-
-
-
-Blockly.Blocks['teste'] = {
-   init: function() {
-       this.appendDummyInput()
-           .appendField("teste");
-       this.appendValueInput("tin")
-           .setCheck(null)
-           .appendField("in tin");
-       this.appendValueInput("tout")
-           .setCheck(null)
-           .appendField("out tout");
-       this.setInputsInline(true);
-       this.setPreviousStatement(true, "LOGIC");
-       this.setNextStatement(true, "LOGIC");
-       this.setColour(90);
-       this.setTooltip("teste");
-       this.setHelpUrl("");
-   }
-};
-
-Blockly.Python["teste"] = function(block) {
-    var block_name = get_temp_name("teste");
-    var code = "teste " + block_name + "(";
-    var val_tin = Blockly.Python.valueToCode(block, "tin", Blockly.Python.ORDER_ATOMIC);
-    code += val_tin;
-    code += ", "
-    var val_tout = Blockly.Python.valueToCode(block, "tout", Blockly.Python.ORDER_ATOMIC);
-    code += val_tout;
-    code += ");"
-    return code;
-}
-
