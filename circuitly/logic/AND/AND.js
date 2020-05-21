@@ -42,7 +42,7 @@ export function load(workspace) {
         code += ", "
         var val_c = Blockly.Python.valueToCode(block, "c", Blockly.Python.ORDER_ATOMIC);
         code += val_c;
-        code += ");";
+        code += ");\n";
         return code;
     }
 }
