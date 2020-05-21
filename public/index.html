@@ -26,12 +26,15 @@
 				<xml
 					xmlns="https://developers.google.com/blockly/xml" id="lesson_00_toolbox" style="display: none">
 					<category name="Logic Gates" colour="#5ba55b">
-						<block type="nand"></block>
 						<block type="module"></block>
+						<block type="NAND"></block>
+						<block type="AND"></block>
 					</category>
 					<category name="Signals" colour="#a55b80">
 						<block type="create_signal"></block>
 						<block type="signal_getter"></block>
+						<block type="splitter"></block>
+						<block type="concat"></block>
 						<!-- <category name="1-bit Signals" colour="#a55b80"> -->
 						<!-- <button text="Create signal" callbackKey="DECLARE_1BIT"></button> -->
 						<!-- <button text="Delete signal" callbackKey="DELETE_1BIT"></button> -->
@@ -128,6 +131,9 @@
         <script src="../blockly/python_compressed.js"></script>
         <script src="../blockly/msg/js/en.js"></script>
         <!-- Load circuitly after Blockly -->
+        <script>
+            global = globalThis // Fix missing global
+        </script>
         <script src="../circuitly/loader.js"
                 id="circuitly-loader" 
                 type="module"
