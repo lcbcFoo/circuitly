@@ -169,10 +169,20 @@ export function load(workspace) {
             }
             return true;
         },
-        declareSignal: function() {
-            // TODO: implement
-            // isValidName
-            //
+        getSvDependencies: function() {
+            var descendants = this.getDescendants();
+            console.log(descendants);
+            var deps = [];
+
+            // List types of descendants excluding those which are reserved
+            // type.
+            for (var i = 0; i < descendants.length; i++) {
+                console.log(descendants[i].type)
+                if (!utils.reservedTypes.includes(descendants[i].type)) {
+                    deps.push(descendants[i].type);
+                }
+            }
+            return deps;
         },
         makeSignalList: function(size) {
             var signals = []
@@ -201,6 +211,7 @@ export function load(workspace) {
     };
 
     Blockly.Python['module'] = function(block) {
+        console.log(block);
         var text_name = block.getFieldValue('NAME');
         var statements_connections = Blockly.Python.statementToCode(block, 'CONNECTIONS');
         var statements_signals = Blockly.Python.statementToCode(block, 'SIGNALS');
@@ -261,6 +272,69 @@ export function load(workspace) {
         }
         code += statements_implementation + '\n';
         code += 'endmodule';
+
+        // Generate new blockly block to instantiate module
+        // code += '\n\ntest block instantiation gen\n\n'
+
+        // // Block definition
+        // code += 'Blockly.Blocks[\'' + text_name + '\'] = {\n' +
+        //         '   init: function() {\n' +
+        //         '       this.appendDummyInput()\n' +
+        //         '           .appendField(\"' + text_name + '\");\n';
+
+        // for (var i = 0; i < conns.length; i++) {
+        //     var type = conns[i]['type'];
+        //     var size = conns[i]['size'];
+        //     var name = conns[i]['name'];
+        //     var bitLen = utils.getSignalBitLen(size);
+        //     var tip = '';
+        //     if (type === "TYPE_INPUT") {
+        //         tip = 'in';
+        //     }
+        //     else {
+        //         tip = 'out'
+        //     }
+        //     var label = tip + ' ' + name;
+        //     code += '       this.appendValueInput(\"' + name + '\")\n';
+        //     code += '           .setCheck(\"SIGNAL\")\n';
+        //     code += '           .appendField(\"' + label + '\");\n';
+        // }
+
+        // code += '       this.setInputsInline(true);\n' +
+        //         '       this.setPreviousStatement(true, "LOGIC");\n' +
+        //         '       this.setNextStatement(true, "LOGIC");\n' +
+        //         '       this.setColour(90);\n' + 
+        //         '       this.setTooltip(\"' + text_name + '\");\n' + 
+        //         '       this.setHelpUrl("");\n' + 
+        //         '   }\n' + 
+        //         '};\n\n';
+
+        // // Block code generation
+        // code += 'Blockly.Python[\"' + text_name + '\"] = function(block) {\n';
+        // code += '    var block_name = utils.get_temp_name(\"' + text_name + '\");\n';
+        // code += '    var code = \"  ' + text_name + ' \" + block_name + \"(\";\n';
+        
+        // // Generate all variables
+        // for (var i = 0; i < conns.length; i++) {
+        //     var type = conns[i]['type'];
+        //     var size = conns[i]['size'];
+        //     var name = conns[i]['name'];
+        //     var bitLen = utils.getSignalBitLen(size);
+        //     var varName = 'val_' + name;
+        //     code += '    var ' + varName + ' = ' +
+        //         'Blockly.Python.valueToCode(block, \"' + name + '\", ' +
+        //         'Blockly.Python.ORDER_ATOMIC);\n';
+        //     code += '    code += ' + varName + ';\n';
+
+        //     if (i < conns.length - 1) {
+        //         code += '    code += \", \"\n';
+        //     }
+        //     else {
+        //         code += '    code += \");\n\";\n';
+        //     }
+        // }
+        // code += '    return code';
+        // code += '}'
         return code;
     };
 }
