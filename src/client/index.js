@@ -3,10 +3,28 @@
 import $ from 'jquery';
 import * as digitaljs from 'digitaljs';
 import './scss/app.scss';
+import  * as utils  from '../../circuitly/utils/utils.js'
 
 //import { saveAs } from 'file-saver';
 
 $(window).on('load', () => {
+    var globalFileData = '';
+    function readTextFile(file) {
+        var rawFile = new XMLHttpRequest();
+        rawFile.open("GET", file, false);
+        rawFile.onreadystatechange = function () {
+            if(rawFile.readyState === 4)
+            {
+                if(rawFile.status === 200 || rawFile.status == 0)
+                {
+                    var allText = rawFile.responseText;
+                    globalFileData = allText;
+                }
+            }
+        };
+        rawFile.send(null);
+    }
+
     //////////////////////////////////////////////////////////////////////////////////
     // Move to circuitly in future
 
@@ -15,9 +33,40 @@ $(window).on('load', () => {
     // document.querySelector('#run').addEventListener('click', runCode);
     function myUpdateFunction(event) {
         var workspace = Blockly.getMainWorkspace();
+        var topBlocks = workspace.getTopBlocks();
+        var svDependencies = [];
+        // Get SV all dependencies to compile workspace
+        for (var i = 0; i < topBlocks.length; i++) {
+            if (topBlocks[i].type != "module") {
+                continue;
+            }
+            var deps = topBlocks[i].getSvDependencies();
+            for (var j = 0; j < deps.length; j++) {
+                svDependencies.push(deps[j]);
+            }
+        }
+        // Filter repeated dependencies
+        var filtered = [];
+        for (var i = 0; i < svDependencies.length; i++) {
+            if (!(utils.reservedTypes.includes(svDependencies[i])
+                || filtered.includes(svDependencies[i]))) {
+
+                filtered.push(svDependencies[i]);
+            }
+        }
+        // List depencies SV files to pass to yosystodigitaljs
+        var svFiles = {}
+        for (var i = 0; i < filtered.length; i++) {
+            var name = filtered[i];
+            var file = '../../circuitly/logic/' + name + '/' + name + '.sv';
+            readTextFile(file);
+            var data = globalFileData;
+            svFiles[name + '.sv'] = data;
+        }
         var code = Blockly.Python.workspaceToCode(workspace);
+        svFiles['_input.sv'] = code;
         document.getElementById('text-code').value = code;
-        return code;
+        return svFiles;
     }
     //workspace.addChangeListener(myUpdateFunction);
 
@@ -132,8 +181,8 @@ $(window).on('load', () => {
     }
 
     function runquery() {
-        var systemVerilogCode = myUpdateFunction();
-        const data = {'_input.sv': systemVerilogCode};
+        const data = myUpdateFunction();
+        console.log(data);
         const opts = { optimize: false,
             fsm: false,
             fsmexpand: false };
