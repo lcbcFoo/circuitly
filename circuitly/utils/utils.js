@@ -34,6 +34,11 @@ export const signalTypesDefinitions = [
     {'type' : 'SIGNAL_INVALID', 'val' : SIGNAL_INVALID, 'colour' : COLOUR_ERROR}
 ];
 
+export const reservedTypes = [
+    'module', 'splitter', 'concat', 'NAND', 'signal_getter',
+    'connections_designer', 'create_signal', 'module_connection'
+];
+
 // Receives a 'type' of signal - for example string "SIGNAL_1BIT"
 export function getSignalBitLen(type) {
     for (var i = 0; i < signalTypesDefinitions.length; i++) {
@@ -58,4 +63,11 @@ export function isSameSignal(sig1, sig2) {
     return sig1['name'] === sig2.name && sig1['size'] === sig2['size'];
 }
 
+var temp_counter = 0;
+
+export function get_temp_name(name) {
+    var temp = temp_counter;
+    temp_counter = temp_counter + 1;
+    return name + '_' + temp;
+}
 
