@@ -3,6 +3,8 @@
         <title>Blockly Circuit Demo</title>
     </head>
     <body>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
         <div class="page-header">
             <h1>
                 Blockly Circuit 
@@ -13,7 +15,7 @@
         <div class="row">
             <div class="cell">
 				<div class="blockly-editor">
-					<div id="blockly-div" style="height: 800px; width: 800px;"></div>
+					<div id="blockly-div" style="height: 600px; width: 800px;"></div>
 				</div>
 				<!-- Insert workspace XML here -->
 				<xml
@@ -57,27 +59,27 @@
 				<button name="compile" type="button" class="btn btn-success btn-compile">
                     Compile circuit
                 </button>
+                <div class="symbola btn-group mr-2" role="group" aria-label="Saving and sharing">
+                    <button name="load_block" type="button" class="btn btn-secondary" title="Load a block from file"><i class="material-icons">add</i></button>
+                    <button name="load_workspace" type="button" class="btn btn-secondary" title="Load workspace from file"><i class="material-icons">folder_open</i></button>
+                    <button name="save" type="button" class="btn btn-secondary" title="Save workspace to file"><i class="material-icons">get_app</i></button>
+                </div>
             </div>
             <div class="cell2">
                 <div id="toolbar">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
                         <div class="symbola btn-group mr-2" role="group" aria-label="Time control">
-                            <button name="pause" type="button" class="btn btn-secondary" title="Pause simulation" disabled="true">⏸</button>
-                            <button name="resume" type="button" class="btn btn-secondary" title="Resume simulation" disabled="true">▶</button>
-                            <button name="fastfw" type="button" class="btn btn-secondary" title="Fast-forward simulation" disabled="true">⏩</button>
-                            <button name="single" type="button" class="btn btn-secondary" title="Run single time step" disabled="true">→</button>
-                            <button name="next" type="button" class="btn btn-secondary" title="Run until next event" disabled="true">⇥</button>
+                            <button name="pause" type="button" class="btn btn-secondary" title="Pause simulation" disabled="true"><i class="material-icons">pause</i></button>
+                            <button name="resume" type="button" class="btn btn-secondary" title="Resume simulation" disabled="true"><i class="material-icons">play_arrow</i></button>
+                            <button name="fastfw" type="button" class="btn btn-secondary" title="Fast-forward simulation" disabled="true"><i class="material-icons">fast_forward</i></button>
+                            <button name="single" type="button" class="btn btn-secondary" title="Run single time step" disabled="true"><i class="material-icons">skip_next</i></button>
+                            <button name="next" type="button" class="btn btn-secondary" title="Run until next event" disabled="true"><i class="material-icons">keyboard_arrow_right</i></button>
                         </div>
                         <div class="input-group mr-2">
                             <div class="input-group-prepend">
-                                <span class="symbola input-group-text" title="Current tick">⏱</span>
+                                <span class="symbola input-group-text" title="Current tick"><i class="material-icons">access_time</i></span>
                             </div>
                             <input type="text" class="form-control" disabled="disabled" id="tick" />
-                        </div>
-                        <div class="symbola btn-group mr-2" role="group" aria-label="Saving and sharing">
-                            <button name="load" type="button" class="btn btn-secondary" title="Load from file" disabled="true">📁</button>
-                            <button name="save" type="button" class="btn btn-secondary" title="Save to file" disabled="true">💾</button>
-                            <button name="link" type="button" class="btn btn-secondary" title="Get link" disabled="true">🔗</button>
                         </div>
                     </div>
                 </div>
@@ -90,8 +92,8 @@
                 <div id="monitorbox">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
                         <div class="symbola btn-group mr-2" role="group" aria-label="Scale control">
-                            <button name="ppt_up" type="button" class="btn btn-secondary" title="Increase pixels per tick" disabled="true">+</button>
-                            <button name="ppt_down" type="button" class="btn btn-secondary" title="Decrease pixels per tick" disabled="true">-</button>
+                            <button name="ppt_up" type="button" class="btn btn-secondary" title="Increase pixels per tick" disabled="true"><i class="material-icons">add</i></button>
+                            <button name="ppt_down" type="button" class="btn btn-secondary" title="Decrease pixels per tick" disabled="true"><i class="material-icons">remove</i></button>
                         </div>
                         <div class="input-group mr-2">
                             <div class="input-group-prepend">
@@ -100,9 +102,9 @@
                             <input type="text" class="form-control" disabled="disabled" name="scale" />
                         </div>
                         <div class="symbola btn-group mr-2" role="group" aria-label="Time control">
-                            <button name="live" type="button" class="btn btn-secondary" title="Live mode" disabled="true">▶</button>
-                            <button name="left" type="button" class="btn btn-secondary" title="Move left" disabled="true">←</button>
-                            <button name="right" type="button" class="btn btn-secondary" title="Move right" disabled="true">→</button>
+                            <button name="live" type="button" class="btn btn-secondary" title="Live mode" disabled="true"><i class="material-icons">play_arrow</i></button>
+                            <button name="left" type="button" class="btn btn-secondary" title="Move left" disabled="true"><i class="material-icons">keyboard_arrow_left</i></button>
+                            <button name="right" type="button" class="btn btn-secondary" title="Move right" disabled="true"><i class="material-icons">keyboard_arrow_right</i></button>
                         </div>
                         <div class="input-group mr-2">
                             <div class="input-group-prepend">

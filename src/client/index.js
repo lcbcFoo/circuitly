@@ -4,6 +4,7 @@ import $ from 'jquery';
 import * as digitaljs from 'digitaljs';
 import './scss/app.scss';
 import  * as utils  from '../../circuitly/utils/utils.js'
+import * as FileSaver from 'file-saver';
 
 //import { saveAs } from 'file-saver';
 
@@ -85,6 +86,9 @@ $(window).on('load', () => {
             if (!loading) $('#toolbar').find('button[name=load]').prop('disabled', false);
             return;
         }
+        $('#toolbar').find('button[name=load]').prop('disabled', false);
+        $('#toolbar').find('button[name=save]').prop('disabled', false);
+        $('#toolbar').find('button[name=link]').prop('disabled', false);
         const running = circuit.running;
         $('#toolbar').find('button[name=pause]').prop('disabled', !running);
         $('#toolbar').find('button[name=resume]').prop('disabled', running);
@@ -234,25 +238,100 @@ $(window).on('load', () => {
         updatebuttons();
     });
 
-    $('button[name=load]').click(e => {
-        $('#input_load').trigger('click');
+    function createInvisibleInput(callback) {
+        // Create once invisible browse button with event listener, and click it
+        var selectFile = document.getElementById('select_file');
+        if (selectFile === null) {
+            var selectFileDom = document.createElement('INPUT');
+            selectFileDom.type = 'file';
+            selectFileDom.id = 'select_file';
+
+            var selectFileWrapperDom = document.createElement('DIV');
+            selectFileWrapperDom.id = 'select_file_wrapper';
+            selectFileWrapperDom.style.display = 'none';
+            selectFileWrapperDom.appendChild(selectFileDom);
+
+            document.body.appendChild(selectFileWrapperDom);
+            selectFile = document.getElementById('select_file');
+            selectFile.addEventListener('change', callback, false);
+        }
+        selectFile.click();
+        // Remove select file to force the recreation every time load button
+        // is clicked
+        selectFile.parentNode.removeChild(selectFile);
+    }
+
+    $('button[name=load_block]').click(e => {
+        console.log('onclick');
+        // Create File Reader event listener function
+        var parseInputXMLfile = function(e) {
+            console.log('parseInputXMLfile');
+            var xmlFile = e.target.files[0];
+            var filename = xmlFile.name;
+            var extensionPosition = filename.lastIndexOf('.');
+            // if (extensionPosition !== -1) {
+            //     filename = filename.substr(0, extensionPosition);
+            // }
+
+            var reader = new FileReader();
+            reader.onload = function() {
+                console.log('reader onload');
+                try {
+                    var dom = Blockly.Xml.textToDom(reader.result);
+                    console.log(dom);
+                    Blockly.Xml.domToWorkspace(dom, Blockly.getMainWorkspace());
+                    console.log(r);
+                }
+                catch (e) {
+                    console.log(e);
+                    window.onerror = function(msg, url, linenumber) {
+                        alert('Invalid file, does not contain a workspace.');
+                        return true;
+                    }
+                }
+            };
+            reader.readAsText(xmlFile);
+        };
+        createInvisibleInput(parseInputXMLfile);
     });
 
-    $('#input_load').change(e => {
-        const files = e.target.files;
-        if (!files) return;
-        const reader = new FileReader();
-        destroycircuit();
-        reader.onload = (e) => {
-            mkcircuit(JSON.parse(e.target.result));
+    $('button[name=load_workspace]').click(e => {
+        console.log('onclick');
+        // Create File Reader event listener function
+        var parseInputXMLfile = function(e) {
+            console.log('parseInputXMLfile');
+            var xmlFile = e.target.files[0];
+            var filename = xmlFile.name;
+            var extensionPosition = filename.lastIndexOf('.');
+
+            var reader = new FileReader();
+            reader.onload = function() {
+                console.log('reader onload');
+                try {
+                    var dom = Blockly.Xml.textToDom(reader.result);
+                    console.log(dom);
+                    Blockly.Xml.clearWorkspaceAndLoadFromXml(dom,
+                        Blockly.getMainWorkspace());
+                    console.log(r);
+                }
+                catch (e) {
+                    console.log(e);
+                    window.onerror = function(msg, url, linenumber) {
+                        alert('Invalid file, does not contain a workspace.');
+                        return true;
+                    }
+                }
+            };
+            reader.readAsText(xmlFile);
         };
-        reader.readAsText(files[0]);
+        createInvisibleInput(parseInputXMLfile);
     });
 
     $('button[name=save]').click(e => {
-        const json = circuit.toJSON();
-        const blob = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
-        saveAs(blob, 'circuit.json');
+        var xmlDom = Blockly.Xml.workspaceToDom(Blockly.getMainWorkspace());
+        var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+        const blob = new Blob([xmlText], {type: "application/xml;charset=utf-8"});
+        FileSaver.saveAs(blob, 'circuitly_workspace.xml');
     });
 
     window.onpopstate = () => {
