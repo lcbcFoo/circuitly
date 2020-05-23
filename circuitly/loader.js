@@ -53,7 +53,15 @@ NAND_loader(workspace);
 
 // TODO: this should be able to search for logic models in logic directory
 import { load as AND_loader } from './logic/AND/AND.js'
+import { load as OR_loader } from './logic/OR/OR.js'
+import { load as XOR_loader } from './logic/XOR/XOR.js'
+import { load as NOR_loader } from './logic/NOR/NOR.js'
+import { load as NOT_loader } from './logic/NOT/NOT.js'
 AND_loader(workspace);
+NOT_loader(workspace);
+OR_loader(workspace);
+XOR_loader(workspace);
+NOR_loader(workspace);
 
 // Load blocks to workspace
 Blockly.Xml.domToWorkspace(workspaceBlocks, workspace);
