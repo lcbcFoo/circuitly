@@ -277,10 +277,24 @@ $(window).on('load', () => {
             reader.onload = function() {
                 console.log('reader onload');
                 try {
+                    ///////////////////////////////////////////////////////////
+                    // TODO check next Blockly version cf issue 
+                    // https://github.com/google/blockly/issues/2926
+                    // Temporary disable dropdown validation as we use dynamic one
+                    // see https://github.com/lcbcFoo/circuitly/issues/3
+                    const fieldDropdownDoClassValidation_ = 
+                        Blockly.FieldDropdown.prototype.doClassValidation_;
+                    Blockly.FieldDropdown.prototype.doClassValidation_ = 
+                        function (newValue) {
+                            console.log(newValue);
+                            return newValue;
+                        }
+
                     var dom = Blockly.Xml.textToDom(reader.result);
-                    console.log(dom);
                     Blockly.Xml.domToWorkspace(dom, Blockly.getMainWorkspace());
-                    console.log(r);
+
+                    Blockly.FieldDropdown.prototype.doClassValidation_ =
+                        fieldDropdownDoClassValidation_;
                 }
                 catch (e) {
                     console.log(e);
@@ -296,23 +310,35 @@ $(window).on('load', () => {
     });
 
     $('button[name=load_workspace]').click(e => {
-        console.log('onclick');
         // Create File Reader event listener function
         var parseInputXMLfile = function(e) {
-            console.log('parseInputXMLfile');
             var xmlFile = e.target.files[0];
             var filename = xmlFile.name;
             var extensionPosition = filename.lastIndexOf('.');
 
             var reader = new FileReader();
             reader.onload = function() {
-                console.log('reader onload');
                 try {
+                    ///////////////////////////////////////////////////////////
+                    // TODO check next Blockly version cf issue 
+                    // https://github.com/google/blockly/issues/2926
+                    // Temporary disable dropdown validation as we use dynamic
+                    // one.
+                    // see https://github.com/lcbcFoo/circuitly/issues/3
+                    const fieldDropdownDoClassValidation_ = 
+                        Blockly.FieldDropdown.prototype.doClassValidation_;
+                    Blockly.FieldDropdown.prototype.doClassValidation_ = 
+                        function (newValue) {
+                            return newValue;
+                        }
+
                     var dom = Blockly.Xml.textToDom(reader.result);
-                    console.log(dom);
                     Blockly.Xml.clearWorkspaceAndLoadFromXml(dom,
                         Blockly.getMainWorkspace());
-                    console.log(r);
+                    
+                    Blockly.FieldDropdown.prototype.doClassValidation_ =
+                        fieldDropdownDoClassValidation_;
+                    ///////////////////////////////////////////////////////////
                 }
                 catch (e) {
                     console.log(e);

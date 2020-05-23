@@ -4,6 +4,7 @@ export function load(workspace) {
     // Define signal_getter
     Blockly.Blocks['signal_getter'] = {
         init: function() {
+            this.first = true;
             this.appendDummyInput()
                 .appendField("")
                 .appendField(new Blockly.FieldDropdown([["1-bit","SIGNAL_1BIT"], ["2-bit","SIGNAL_2BIT"], ["4-bit","SIGNAL_4BIT"], ["8-bit","SIGNAL_8BIT"], ["16-bit","SIGNAL_16BIT"], ["32-bit","SIGNAL_32BIT"], ["64-bit","SIGNAL_64BIT"]]), "SIZE_SELECTION");
@@ -17,6 +18,29 @@ export function load(workspace) {
             this.setHelpUrl("");
         },
         onchange: function() {
+            ///////////////////////////////////////////////////////////
+            // TODO check next Blockly version cf issue 
+            // https://github.com/google/blockly/issues/2926
+            // On first time this block is created by domToWorkspace, UI will
+            // show INVALID_SIGNAL even with correct dropdown value. Force UI
+            // to show default value from the block being imported to 
+            // workspace by rendering all entries in dropdown and then 
+            // setting the correct one.
+            // This causes a warning on new blocks that are from 
+            // domToWorkspace, but no incorrect behavior occurs in this case.
+            // see https://github.com/lcbcFoo/circuitly/issues/3
+            if (this.first) {
+                this.first = false;
+                var v = this.getFieldValue("SIGNAL_NAME");
+                var fields = this.getField("SIGNAL_NAME").getOptions(false);
+                for (var i = 0; i < fields.length && i < 2; i++ ) {
+                    this.getField("SIGNAL_NAME").setValue(fields[i][0]);
+                }
+                this.getField("SIGNAL_NAME").setValue(v);
+            }
+            ///////////////////////////////////////////////////////////
+
+            // Update color depending on size selected
             var size = this.getFieldValue('SIZE_SELECTION');
             var colour = utils.getSignalColour(size);
 
@@ -25,7 +49,7 @@ export function load(workspace) {
         makeSignalList: function() {
             // Is attached to a module
             var root = this.getRootBlock();
-            if (root != this) {
+            if (root.type === "module") {
                 return root.makeSignalList(this.getFieldValue("SIZE_SELECTION"));
             }
 
