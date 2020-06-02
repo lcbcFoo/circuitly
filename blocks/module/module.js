@@ -184,6 +184,9 @@ export function load(workspace) {
             }
             return deps;
         },
+        getConnections: function() {
+            return this.connections;
+        },
         makeSignalList: function(size) {
             var signals = []
             // List connections
