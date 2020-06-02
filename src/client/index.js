@@ -28,6 +28,14 @@ $(window).on('load', () => {
 
     //////////////////////////////////////////////////////////////////////////////////
     // Move to circuitly in future
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+    var allConnections = null;
+    var simTimescaleMs = 1000;
+    let circuitData = {};
+    let inputDevices = [];
+    let outputDevices = [];
+    let runningTb;
+    let successDeferred;
 
     // TODO: remove this block
     // Debug - Code generated
@@ -36,6 +44,14 @@ $(window).on('load', () => {
         var workspace = Blockly.getMainWorkspace();
         var topBlocks = workspace.getTopBlocks();
         var svDependencies = [];
+        // Update allConnections
+        allConnections = [];
+        for (var i = 0; i < topBlocks.length; i++) {
+            if (topBlocks[i].type != "module") {
+                continue;
+            }
+            allConnections.push(topBlocks[i].getConnections());
+        }
         // Get SV all dependencies to compile workspace
         for (var i = 0; i < topBlocks.length; i++) {
             if (topBlocks[i].type != "module") {
@@ -124,7 +140,8 @@ $(window).on('load', () => {
         $('#monitorbox button').prop('disabled', true).off();
     }
 
-    function mkcircuit(data) {
+    async function mkcircuit(data) {
+        circuitData = data;
         loading = false;
         $('form').find('input, textarea, button, select').prop('disabled', false);
         circuit = new digitaljs.Circuit(data);
@@ -182,6 +199,13 @@ $(window).on('load', () => {
         show_scale();
         monitorview.on('change:start', show_range);
         monitorview.on('change:pixelsPerTick', show_scale);
+        // Update information about the circuit / components and UI in case
+        // testbench is run later
+        // TODO: better way to wait for digitaljs load circuit into UI
+        await delay(2000);
+        identifyCircuitElements(data);
+        // Allow users to run testbench
+        $('button[name=run-tb]').prop('disabled', false);
     }
 
     function runquery() {
@@ -211,7 +235,14 @@ $(window).on('load', () => {
     }
 
     $('button[name=compile]').click(e => {
+        // TODO: study better syncronism mechanism
+        // Ensure there is no testbench running
+        if (runningTb && runningTb.state() === 'pending') {
+            runningTb.reject();
+        }
         e.preventDefault();
+        // Disable testbench button until circuit is properly loaded
+        $('button[name=run-tb]').prop('disabled', true);
         runquery();
     });
 
@@ -358,6 +389,171 @@ $(window).on('load', () => {
         var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
         const blob = new Blob([xmlText], {type: "application/xml;charset=utf-8"});
         FileSaver.saveAs(blob, 'circuitly_workspace.xml');
+    });
+
+    // Receive object data returned from yosys2digitaljs
+    // Populates following global variables with relevant data:
+    // - inputDevices: list of {'label', 'element', 'typeofelement'}
+    // - outputDevices: list of {'label', 'element', 'typeofelement'}
+    function identifyCircuitElements(data) {
+        inputDevices = [];
+        outputDevices = [];
+        for (let [key, value] of Object.entries(data['devices'])) {
+            console.log(key);
+            console.log(value);
+            var celltype = value['celltype'];
+            var net = value['net'];
+            var label = value['label'];
+            var bits = value['bits'];
+            var element = null;
+            var typeofelement = null;
+            // Find label related to this device
+            var textElement = $('text').filter(function() {
+                return $(this).hasClass('label') && $(this).text() === label;
+            });
+            var listToPush = null
+            // Get label parent
+            var parentElement = $(textElement[0]).parent()[0];
+            // Identify the celltype
+            if (celltype === '$button') {
+                var child = $(parentElement)
+                    .children('rect').filter(function() {
+                        return $(this).hasClass('btnface');
+                    })[0];
+                console.log(child);
+                typeofelement = 'btnface';
+                element = child;
+                listToPush = inputDevices;
+            }
+            else if (celltype === '$lamp') {
+                var child = $(parentElement)
+                    .children('circle').filter(function() {
+                        return $(this).hasClass('led');
+                    })[0];
+                console.log(child);
+                typeofelement = 'led';
+                element = child;
+                listToPush = outputDevices;
+            }
+            else if (celltype === '$numentry') {
+                var child = $(parentElement)
+                    .find('input').filter(function() {
+                        return $(this).hasClass('numvalue');
+                    })[0];
+                console.log(child);
+                typeofelement = 'numvalue';
+                element = child;
+                listToPush = inputDevices;
+            }
+
+            else if (celltype === '$numdisplay') {
+                var child = $(parentElement)
+                    .children('text').filter(function() {
+                        return $(this).hasClass('numvalue');
+                    })[0];
+                console.log(child);
+                typeofelement = 'numvalue_out';
+                element = child;
+                listToPush = outputDevices;
+            }
+
+            if (listToPush) {
+                listToPush.push({
+                    'label' : label,
+                    'net' : net,
+                    'bits' : bits,
+                    'element' : element,
+                    'typeofelement' : typeofelement
+                });
+            }
+        }
+    }
+
+    // Set circuit input button to high (bool=true) / low (bool=false)
+    function setIOButtonValue(button, bool) {
+        // Set signal to high
+        if (bool) {
+            // If not already high
+            if (! $(button).hasClass('live')) {
+                $(button).trigger('click');
+            }
+        }
+        // Set signal to low
+        else {
+            // If not already low
+            if ($(button).hasClass('live')) {
+                $(button).trigger('click');
+            }
+        }
+    }
+
+    function setIONumValue(numvalue, hexval) {
+        var strval = hexval.toString(16);
+        console.log(strval);
+        $(numvalue).val(strval);
+        $(numvalue).trigger('change');
+    }
+
+    // Return true if lamp is high, false otherwise
+    function getIOLampValue(lamp) {
+        return $(lamp).hasClass('live');
+    }
+
+    // Return integer value showing in numvalue_out element (assuming it is 
+    // in hex format)
+    function getIONumValueOut(numvalue_out) {
+        var intval = parseInt($(numvalue_out).text(), 16);
+        console.log(intval);
+        return intval;
+    }
+
+    async function runTestbench(successDeferred, runningPromise) {
+        console.log(inputDevices);
+        console.log(outputDevices);
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+        var val = 'a5';
+        while (true) {
+            if (runningPromise.state() === 'rejected') {
+                successDeferred.reject();
+                return;
+            }
+            await delay(simTimescaleMs / 2);
+            setIONumValue(inputDevices[0].element, val);
+            if (val === 'a5')
+                val = '5a';
+            else
+                val = 'a5';
+            await delay(simTimescaleMs / 2);
+            var res = getIONumValueOut(outputDevices[0].element);
+            console.log(res);
+        }
+
+        successDeferred.resolve();
+    }
+
+    $('button[name=run-tb]').click(e => {
+        // TODO: study better syncronism mechanism
+        if (runningTb && runningTb.state() === 'pending') {
+            runningTb.reject();
+        }
+        // Disable run-tb button until tb run is finished or cancelled
+        $('button[name=run-tb]').prop('disabled', true);
+        runningTb = new $.Deferred();
+        successDeferred = new $.Deferred();
+
+        runningTb.done(function() {
+            console.log('Testbench passed');
+        });
+        runningTb.fail(function() {
+            console.log('Testbench failed');
+        });
+        runningTb.always(function() {
+            console.log('Testbench finished');
+            // Allow users to run testbench
+            $('button[name=run-tb]').prop('disabled', false);
+        });
+
+        runTestbench(successDeferred, runningTb.promise());
     });
 
     window.onpopstate = () => {
