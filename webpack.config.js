@@ -1,7 +1,8 @@
 module.exports = {
-  entry: "./src/client/index.js",
-  devtool: "source-map",
-  module: {
+    entry: "./src/client/index.ts",
+    devtool: "source-map",
+    target: "web",
+    module: {
         rules: [
             {
                 test: /\.css$/,
@@ -13,28 +14,42 @@ module.exports = {
             },
             {
                 test: /\.svg|\.png/,
-                use: [
-                    'base64-inline-loader?limit=1000&name=[name].[ext]'
-                ]
+                use: ["base64-inline-loader?limit=1000&name=[name].[ext]"]
             },
             {
                 test: /\.js/,
-                loader: 'babel-loader',
+                loader: "babel-loader",
                 exclude: /node_modules/
-            }, {
-                test: require.resolve('jquery'),
+            },
+            {
+                test: require.resolve("jquery"),
+                use: [
+                    {
+                        loader: "expose-loader",
+                        options: "$"
+                    }
+                ]
+            },
+            {
+                test: /\.tsx?$/,
                 use: [{
-                    loader: 'expose-loader',
-                    options: '$'
-                }]
-            }
+                    loader: 'ts-loader',
+                    options: {
+                        configFile: "tsconfig.json"
+                    }
+                }],
+                exclude: /node_modules/
+            },
         ]
-  },
-  devServer: {
-    port: 3000,
-    open: true,
-    proxy: {
-      "/api": "http://localhost:8080"
+    },
+    resolve: {
+        extensions: [ '.tsx', '.ts', '.js' ],
+    },
+    devServer: {
+        port: 3000,
+        open: true,
+        proxy: {
+            "/api": "http://localhost:8080"
+        }
     }
-  },
-}
+};

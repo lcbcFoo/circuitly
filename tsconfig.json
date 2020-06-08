@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "target": "es6",
+    "sourceMap": true,
+    "allowJs": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "declaration": true
+  }
+}
