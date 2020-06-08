@@ -3,7 +3,7 @@
 import JQuery from "jquery";
 import * as digitaljs from "digitaljs";
 import "./scss/app.scss";
-import * as utils from "../../circuitly/utils/utils.js";
+import * as utils from "../../circuitly-blocks/utils/utils.js";
 import FileSaver from "file-saver";
 import csv from "csv-parser";
 import fileReaderStream from "filereader-stream";
