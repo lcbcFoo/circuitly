@@ -1,18 +1,18 @@
 "use strict";
 
-import JQuery from 'jquery';
+import JQuery from "jquery";
 import * as digitaljs from "digitaljs";
 import "./scss/app.scss";
 import * as utils from "../../circuitly/utils/utils.js";
 import FileSaver from "file-saver";
-import csv from 'csv-parser';
+import csv from "csv-parser";
 import fileReaderStream from "filereader-stream";
 
 //import { saveAs } from 'file-saver';
 
 $(window).on("load", () => {
     var globalFileData = "";
-    function readTextFile(file : string) {
+    function readTextFile(file: string) {
         var rawFile = new XMLHttpRequest();
         rawFile.open("GET", file, false);
         rawFile.onreadystatechange = function() {
@@ -28,33 +28,33 @@ $(window).on("load", () => {
 
     //////////////////////////////////////////////////////////////////////////////////
     // Move to circuitly in future
-    const delay = (ms : number) => new Promise(res => setTimeout(res, ms));
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
     var allConnections = null;
     var simTimescaleMs = 1000;
 
     /***/
-    var testbenchInputs : Object[] = [];
-    var testbenchResults : Object[] = [];
+    var testbenchInputs: Object[] = [];
+    var testbenchResults: Object[] = [];
 
     interface IODevice {
-        net : string,
-        bits : number,
-        element : HTMLElement,
-        typeofelement : string
-    };
+        net: string;
+        bits: number;
+        element: HTMLElement;
+        typeofelement: string;
+    }
 
-    let inputDevices : {[label : string] : IODevice};
-    let outputDevices : {[label : string] : IODevice};
-    let runningTb : JQueryDeferred<void>;
-    let successDeferred : JQueryDeferred<void>;
+    let inputDevices: { [label: string]: IODevice };
+    let outputDevices: { [label: string]: IODevice };
+    let runningTb: JQueryDeferred<void>;
+    let successDeferred: JQueryDeferred<void>;
 
     // TODO: remove this block
     // Debug - Code generated
     // document.querySelector('#run').addEventListener('click', runCode);
     function myUpdateFunction() {
         let workspace = Blockly.getMainWorkspace();
-        let topBlocks : any[] = workspace.getTopBlocks();
-        let svDependencies : any[] = [];
+        let topBlocks: any[] = workspace.getTopBlocks();
+        let svDependencies: any[] = [];
         // Update allConnections
         allConnections = [];
         for (let i = 0; i < topBlocks.length; i++) {
@@ -74,7 +74,7 @@ $(window).on("load", () => {
             }
         }
         // Filter repeated dependencies
-        let filtered : string[] = [];
+        let filtered: string[] = [];
         for (let i = 0; i < svDependencies.length; i++) {
             if (
                 !(
@@ -86,9 +86,9 @@ $(window).on("load", () => {
             }
         }
         // List depencies SV files to pass to yosystodigitaljs
-        let svFiles : {[id : string] : string} = {};
+        let svFiles: { [id: string]: string } = {};
         for (let i = 0; i < filtered.length; i++) {
-            let name : string = filtered[i];
+            let name: string = filtered[i];
             let file = "../../circuitly/logic/" + name + "/" + name + ".sv";
             readTextFile(file);
             let data = globalFileData;
@@ -96,7 +96,9 @@ $(window).on("load", () => {
         }
         let code = Blockly.Python.workspaceToCode(workspace);
         svFiles["_input.sv"] = code;
-        (<HTMLTextAreaElement>document.getElementById("text-code")).value = code;
+        (<HTMLTextAreaElement>(
+            document.getElementById("text-code")
+        )).value = code;
         return svFiles;
     }
     //workspace.addChangeListener(myUpdateFunction);
@@ -106,11 +108,11 @@ $(window).on("load", () => {
     //
 
     let loading = false;
-    let circuit : digitaljs.Circuit;
-    let monitorview : digitaljs.MonitorView;
-    let monitor : digitaljs.Monitor;
-    let paper : HTMLElement;
-    let monitormem : HTMLElement;
+    let circuit: digitaljs.Circuit;
+    let monitorview: digitaljs.MonitorView;
+    let monitor: digitaljs.Monitor;
+    let paper: HTMLElement;
+    let monitormem: HTMLElement;
 
     function updatebuttons() {
         if (circuit == undefined) {
@@ -179,13 +181,13 @@ $(window).on("load", () => {
             .off();
     }
 
-    async function mkcircuit(data : any) {
+    async function mkcircuit(data: any) {
         loading = false;
         $("form")
             .find("input, textarea, button, select")
             .prop("disabled", false);
         circuit = new digitaljs.Circuit(data);
-        circuit.on("postUpdateGates", (tick : number) => {
+        circuit.on("postUpdateGates", (tick: number) => {
             $("#tick").val(tick);
         });
         circuit.start();
@@ -232,17 +234,20 @@ $(window).on("load", () => {
                         circuit.tick -
                         monitorview.width / monitorview.pixelsPerTick;
             });
-        monitorview.on("change:live", (live : boolean) => {
+        monitorview.on("change:live", (live: boolean) => {
             $("#monitorbox button[name=live]").toggleClass("active", live);
         });
         monitor.on("add", () => {
             if ($("#monitorbox").height() == 0)
-                $("html > body > div").css("grid-template-rows", (_1 : any, old : string) => {
-                    const z = old.split(" ");
-                    z[1] = "3fr";
-                    z[3] = "1fr";
-                    return z.join(" ");
-                });
+                $("html > body > div").css(
+                    "grid-template-rows",
+                    (_1: any, old: string) => {
+                        const z = old.split(" ");
+                        z[1] = "3fr";
+                        z[3] = "1fr";
+                        return z.join(" ");
+                    }
+                );
         });
         const show_range = () => {
             $("#monitorbox input[name=rangel]").val(
@@ -284,10 +289,10 @@ $(window).on("load", () => {
             contentType: "application/json",
             data: JSON.stringify({ files: data, options: opts }),
             dataType: "json",
-            success: (responseData : any) => {
+            success: (responseData: any) => {
                 mkcircuit(responseData.output);
             },
-            error: (_request : any, _status : any, _error : any) => {
+            error: (_request: any, _status: any, _error: any) => {
                 console.log("Server error");
                 loading = false;
                 updatebuttons();
@@ -295,7 +300,7 @@ $(window).on("load", () => {
         });
     }
 
-    $("button[name=compile]").click((e : JQuery.Event) => {
+    $("button[name=compile]").click((e: JQuery.Event) => {
         // TODO: study better syncronism mechanism
         // Ensure there is no testbench running
         if (runningTb && runningTb.state() === "pending") {
@@ -330,11 +335,13 @@ $(window).on("load", () => {
         updatebuttons();
     });
 
-    function createInvisibleInput(callback : (ev?: Event) => any) {
+    function createInvisibleInput(callback: (ev?: Event) => any) {
         // Create once invisible browse button with event listener, and click it
         var selectFile = document.getElementById("select_file");
         if (selectFile === null) {
-            var selectFileDom = <HTMLInputElement>document.createElement("INPUT");
+            var selectFileDom = <HTMLInputElement>(
+                document.createElement("INPUT")
+            );
             selectFileDom.type = "file";
             selectFileDom.id = "select_file";
 
@@ -344,7 +351,9 @@ $(window).on("load", () => {
             selectFileWrapperDom.appendChild(selectFileDom);
 
             document.body.appendChild(selectFileWrapperDom);
-            selectFile = <HTMLInputElement>document.getElementById("select_file");
+            selectFile = <HTMLInputElement>(
+                document.getElementById("select_file")
+            );
             selectFile.addEventListener("change", callback, false);
         }
         selectFile.click();
@@ -356,7 +365,7 @@ $(window).on("load", () => {
     $("button[name=load_block]").click(() => {
         console.log("onclick");
         // Create File Reader event listener function
-        var parseInputXMLfile = function(e : Event) {
+        var parseInputXMLfile = function(e: Event) {
             console.log("parseInputXMLfile");
             var xmlFile = (<HTMLInputElement>e.target).files[0];
 
@@ -372,7 +381,7 @@ $(window).on("load", () => {
                     const fieldDropdownDoClassValidation_ =
                         Blockly.FieldDropdown.prototype.doClassValidation_;
                     Blockly.FieldDropdown.prototype.doClassValidation_ = function(
-                        newValue : any
+                        newValue: any
                     ) {
                         console.log(newValue);
                         return newValue;
@@ -397,7 +406,7 @@ $(window).on("load", () => {
 
     $("button[name=load_workspace]").click(() => {
         // Create File Reader event listener function
-        var parseInputXMLfile = function(e : Event) {
+        var parseInputXMLfile = function(e: Event) {
             var xmlFile = (<HTMLInputElement>e.target).files[0];
 
             var reader = new FileReader();
@@ -412,7 +421,7 @@ $(window).on("load", () => {
                     const fieldDropdownDoClassValidation_ =
                         Blockly.FieldDropdown.prototype.doClassValidation_;
                     Blockly.FieldDropdown.prototype.doClassValidation_ = function(
-                        newValue : any
+                        newValue: any
                     ) {
                         return newValue;
                     };
@@ -452,24 +461,23 @@ $(window).on("load", () => {
     // - inputDevices: dict of {'label' : {'net', 'bits', 'element', 'typeofelement'}}
     // - outputDevices: list of {'label' : {'net', 'bits', 'element', 'typeofelement'}}
     interface Device {
-        celltype : string,
-        bits : number,
-        label : string,
-        nets : string
-    };
-    function identifyCircuitElements(data : {[id : string] : Device}) {
-
+        celltype: string;
+        bits: number;
+        label: string;
+        nets: string;
+    }
+    function identifyCircuitElements(data: { [id: string]: Device }) {
         inputDevices = {};
         outputDevices = {};
         for (let [key, value] of Object.entries(data["devices"])) {
             console.log(key);
             console.log(value);
-            let celltype : string = <string>value["celltype"];
-            let net : string = value["net"];
-            let label : string = value["label"];
-            let bits : number = value["bits"];
-            let element : HTMLElement = null;
-            let typeofelement : string = null;
+            let celltype: string = <string>value["celltype"];
+            let net: string = value["net"];
+            let label: string = value["label"];
+            let bits: number = value["bits"];
+            let element: HTMLElement = null;
+            let typeofelement: string = null;
             // Find label related to this device
             let textElement = $("text").filter(function() {
                 return $(this).hasClass("label") && $(this).text() === label;
@@ -533,7 +541,7 @@ $(window).on("load", () => {
 
     /* Set circuit input button to high (bool=true) / low (bool=false)
      */
-    function setIOButtonValue(button : HTMLElement, bool : boolean) {
+    function setIOButtonValue(button: HTMLElement, bool: boolean) {
         // Set signal to high
         if (bool) {
             // If not already high
@@ -552,21 +560,21 @@ $(window).on("load", () => {
 
     /* Set a numvalue input element to hexval (hex string)
      */
-    function setIONumValue(numvalue : HTMLElement, hexval : string) {
+    function setIONumValue(numvalue: HTMLElement, hexval: string) {
         $(numvalue).val(hexval);
         $(numvalue).trigger("change");
     }
 
     /* Return true if lamp is high, false otherwise
      */
-    function getIOLampValue(lamp : HTMLElement) {
+    function getIOLampValue(lamp: HTMLElement) {
         return $(lamp).hasClass("live");
     }
 
     /* Return integer value showing in numvalue_out element (assuming it is
      * in hex format)
      */
-    function getIONumValueOut(numvalue_out : HTMLElement) {
+    function getIONumValueOut(numvalue_out: HTMLElement) {
         let intval = parseInt($(numvalue_out).text(), 16);
         return intval;
     }
@@ -575,31 +583,36 @@ $(window).on("load", () => {
      * listed input to the corresponding values
      */
     interface NameVal {
-        name : string,
-        val : number | string | boolean
-    };
+        name: string;
+        val: number | string | boolean;
+    }
 
     interface NameOnly {
-        name : string
-    };
+        name: string;
+    }
 
-    function setInputs(inputConnections : NameVal[]) {
+    function setInputs(inputConnections: NameVal[]) {
         inputConnections.forEach(inputConnection => {
-            let name = inputConnection['name'];
-            let val = inputConnection['val'];
-            let circuitElement = inputDevices[name]['element'];
-            let type = inputDevices[name]['typeofelement'];
+            let name = inputConnection["name"];
+            let val = inputConnection["val"];
+            let device = inputDevices[name];
+            // Check if input actually exists and is loaded, if not just
+            // ignore testbench input entry
+            if (device) {
+                let circuitElement = device["element"];
+                let type = device["typeofelement"];
 
-            switch (type) {
-                case "btnface":
-                    setIOButtonValue(circuitElement, <boolean>val);
+                switch (type) {
+                    case "btnface":
+                        setIOButtonValue(circuitElement, <boolean>val);
                     break;
-                case "numvalue":
-                    setIONumValue(circuitElement, <string>val);
+                    case "numvalue":
+                        setIONumValue(circuitElement, <string>val);
                     break;
-                default:
-                    console.log('invalid circuit type at testbench');
+                    default:
+                        console.log("invalid circuit type at testbench");
                     break;
+                }
             }
         });
     }
@@ -607,49 +620,89 @@ $(window).on("load", () => {
     /* Given a array of {'name' : outputName} returns a list of [{'name', 'val'}]
      * corresponding to the current values of the circuit elements
      */
-    function getOutputs(outputConnections : NameOnly[]) : NameVal[]{
-        let values : NameVal[];
+    function getOutputs(outputConnections: NameOnly[]): NameVal[] {
+        let values: NameVal[] = [];
         outputConnections.forEach(outputConnection => {
-            let name = outputConnection['name'];
-            let circuitElement = outputDevices[name]['element'];
-            let type = outputDevices[name]['typeofelement'];
-            let val = null;
-            switch (type) {
-                case "led":
-                    val = getIOLampValue(circuitElement);
+            let name = outputConnection["name"];
+            let device = outputDevices[name];
+            // Check if output actually exists and is loaded, if not just
+            // ignore testbench output entry
+            if (device) {
+                let circuitElement = device["element"];
+                let type = device["typeofelement"];
+                let val = null;
+                switch (type) {
+                    case "led":
+                        val = getIOLampValue(circuitElement);
                     break;
-                case "numvalue_out":
-                    val = getIONumValueOut(circuitElement);
+                    case "numvalue_out":
+                        val = getIONumValueOut(circuitElement);
                     break;
-                default:
-                    console.log('invalid circuit type at testbench');
+                    default:
+                        console.log("invalid circuit type at testbench");
                     break;
-            }
-            if (val) {
-                values.push({'name' : name, 'val' : val});
+                }
+                if (val) {
+                    values.push({ name: name, val: val });
+                }
             }
         });
         return values;
     }
 
-    function validateResults(expectedResults : NameVal[]) : boolean {
-        let outputsList : NameOnly[];
+    interface TestbenchResult {
+        success: boolean,
+        failDescription: string,
+        failLine: number
+    }
+
+    function validateResults(expectedResults: NameVal[]): TestbenchResult {
+        let outputsList: NameOnly[] = [];
+        var returnVal: TestbenchResult = <TestbenchResult>{};
+        returnVal.failDescription = '';
+
         // Create a list of {'name'} of the output signals
         if (expectedResults) {
             expectedResults.forEach(function(output) {
-                outputsList.push({'name' : output['name']});
+                outputsList.push({ name: output["name"] });
             });
-            let results : NameVal[] = getOutputs(outputsList);
-            // TODO: compare results with expected
-            return true;
+            let results: NameVal[] = getOutputs(outputsList);
+
+            // Compare results with expected. Outputs not listed are ignored.
+            for (let i = 0; i < expectedResults.length; i++) {
+                const expected = expectedResults[i];
+                const result = results.filter(obj => {
+                    return obj.name === expected.name;
+                })[0];
+
+                if (!result) {
+                    returnVal.success = false;
+                    returnVal.failDescription = 'Invalid signal name: ' + expected.name;
+                    returnVal.failLine = i + 1;
+                    return returnVal;
+                }
+
+                // Testbench failed
+                if (expected.val !== result.val) {
+                    returnVal.success = false;
+                    returnVal.failDescription = 'Different output detected for ';
+                    returnVal.failDescription += expected.name + '. Expected ';
+                    returnVal.failDescription += expected.val;
+                    returnVal.failDescription += '. Found: ' + result.val + '.';
+                    returnVal.failLine = i + 1;
+                    return returnVal;
+                }
+            }
         }
 
-        return true;
+        returnVal.success = true;
+        return returnVal;
     }
 
-    async function runTestbench(successDeferred : any, runningPromise : any) {
-        let timedInputs : NameVal[][] = [];
-        let timedExpectedResults : NameVal[][] = [];
+    async function runTestbench(successDeferred: JQueryDeferred<void>,
+                                runningPromise: JQueryPromise<void>) {
+        let timedInputs: NameVal[][] = [];
+        let timedExpectedResults: NameVal[][] = [];
         console.log(testbenchInputs);
         console.log(testbenchResults);
 
@@ -657,7 +710,7 @@ $(window).on("load", () => {
         testbenchInputs.forEach(function(inputs) {
             let clockTickInputs = [];
             for (let [key, value] of Object.entries(inputs)) {
-                clockTickInputs.push({'name' : key, 'val' : value});
+                clockTickInputs.push({ name: key, val: value });
             }
             timedInputs.push(clockTickInputs);
         });
@@ -666,7 +719,10 @@ $(window).on("load", () => {
         testbenchResults.forEach(function(results) {
             let clockTickOutputs = [];
             for (let [key, value] of Object.entries(results)) {
-                clockTickOutputs.push({'name' : key, 'val' : value});
+                clockTickOutputs.push({ 
+                    name: key,
+                    val: parseInt(value, 16)
+                });
             }
             timedExpectedResults.push(clockTickOutputs);
         });
@@ -681,8 +737,9 @@ $(window).on("load", () => {
             await delay(simTimescaleMs / 2);
             setInputs(timedInputs[i]);
             await delay(simTimescaleMs / 2);
-            if (!validateResults(timedExpectedResults[i])) {
-                console.log('Invalid results');
+            let tbResults: TestbenchResult = validateResults(timedExpectedResults[i]);
+            if (!tbResults.success) {
+                console.log(tbResults.failDescription);
                 successDeferred.reject();
             }
         }
@@ -691,28 +748,28 @@ $(window).on("load", () => {
     }
 
     // TODO: implement csv loader for inputs / expeted values
-    $("input[name=input-inputs-tb]").change((e : JQuery.ChangeEvent) => {
-        let csvFile = (<HTMLInputElement>e.target).files[0];''
-        let read:Object[] = [];
+    $("input[name=input-inputs-tb]").change((e: JQuery.ChangeEvent) => {
+        let csvFile = (<HTMLInputElement>e.target).files[0];
+        let read: Object[] = [];
         fileReaderStream(csvFile)
-            .pipe(csv())
-            .on("data", (data : Object): number => read.push(data))
-            .on('end', () => {
-                testbenchInputs = read;
-                console.log(testbenchInputs);
-            });
+        .pipe(csv())
+        .on("data", (data: Object): number => read.push(data))
+        .on("end", () => {
+            testbenchInputs = read;
+            console.log(testbenchInputs);
+        });
     });
 
-    $("input[name=input-results-tb]").change((e : JQuery.ChangeEvent) => {
+    $("input[name=input-results-tb]").change((e: JQuery.ChangeEvent) => {
         let csvFile = (<HTMLInputElement>e.target).files[0];
-        let read : NameVal[];
+        let read: Object[] = [];
         fileReaderStream(csvFile)
-            .pipe(csv())
-            .on("data", (data : any) => read.push(data))
-            .on('end', () => {
-                testbenchResults = read;
-                console.log(testbenchResults);
-            });
+        .pipe(csv())
+        .on("data", (data: Object): number => read.push(data))
+        .on("end", () => {
+            testbenchResults = read;
+            console.log(testbenchResults);
+        });
     });
 
     $("button[name=run-tb]").click(() => {
@@ -725,13 +782,15 @@ $(window).on("load", () => {
         runningTb = JQuery.Deferred();
         successDeferred = JQuery.Deferred();
 
-        runningTb.done(function() {
+        successDeferred.done(function() {
             console.log("Testbench passed");
+            runningTb.resolve();
         });
-        runningTb.fail(function() {
+        successDeferred.fail(function() {
             console.log("Testbench failed");
+            runningTb.reject();
         });
-        runningTb.always(function() {
+        successDeferred.always(function() {
             console.log("Testbench finished");
             // Allow users to run testbench
             $("button[name=run-tb]").prop("disabled", false);
@@ -748,8 +807,8 @@ $(window).on("load", () => {
 
     updatebuttons();
     $("#monitorbox button")
-        .prop("disabled", true)
-        .off();
+    .prop("disabled", true)
+    .off();
 
     // if (window.location.hash.slice(1)) window.onpopstate();
 
