@@ -89,7 +89,7 @@ $(window).on("load", () => {
         let svFiles: { [id: string]: string } = {};
         for (let i = 0; i < filtered.length; i++) {
             let name: string = filtered[i];
-            let file = "../../circuitly/logic/" + name + "/" + name + ".sv";
+            let file = "../../circuitly-blocks/logic/" + name + "/" + name + ".sv";
             readTextFile(file);
             let data = globalFileData;
             svFiles[name + ".sv"] = data;
