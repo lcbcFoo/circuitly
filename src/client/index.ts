@@ -604,7 +604,14 @@ $(window).on("load", () => {
 
                 switch (type) {
                     case "btnface":
-                        setIOButtonValue(circuitElement, <boolean>val);
+                        let bool: boolean;
+                        if (val === 0 || val === "0" || val === false) {
+                            bool = false;
+                        }
+                        else {
+                            bool = true;
+                        }
+                        setIOButtonValue(circuitElement, bool);
                     break;
                     case "numvalue":
                         setIONumValue(circuitElement, <string>val);
@@ -677,7 +684,8 @@ $(window).on("load", () => {
 
                 if (!result) {
                     returnVal.success = false;
-                    returnVal.failDescription = 'Invalid signal name: ' + expected.name;
+                    returnVal.failDescription = 'There is no output signal named "'
+                    returnVal.failDescription += expected.name + '" in the circuit.';
                     returnVal.failLine = i + 1;
                     return returnVal;
                 }
@@ -685,10 +693,10 @@ $(window).on("load", () => {
                 // Testbench failed
                 if (expected.val !== result.val) {
                     returnVal.success = false;
-                    returnVal.failDescription = 'Different output detected for ';
-                    returnVal.failDescription += expected.name + '. Expected ';
-                    returnVal.failDescription += expected.val;
-                    returnVal.failDescription += '. Found: ' + result.val + '.';
+                    returnVal.failDescription = 'Different value detected for output "';
+                    returnVal.failDescription += expected.name + '". Expected 0x';
+                    returnVal.failDescription += expected.val.toString(16);
+                    returnVal.failDescription += '. Found: 0x' + result.val.toString(16) + '.';
                     returnVal.failLine = i + 1;
                     return returnVal;
                 }
@@ -703,8 +711,6 @@ $(window).on("load", () => {
                                 runningPromise: JQueryPromise<void>) {
         let timedInputs: NameVal[][] = [];
         let timedExpectedResults: NameVal[][] = [];
-        console.log(testbenchInputs);
-        console.log(testbenchResults);
 
         // Create a list of {'name', 'value'} for the input signals
         testbenchInputs.forEach(function(inputs) {
@@ -727,8 +733,6 @@ $(window).on("load", () => {
             timedExpectedResults.push(clockTickOutputs);
         });
 
-        console.log(timedInputs);
-        console.log(timedExpectedResults);
         for (let i = 0; i < timedInputs.length; i++) {
             if (runningPromise.state() === "rejected") {
                 successDeferred.reject();
@@ -739,11 +743,16 @@ $(window).on("load", () => {
             await delay(simTimescaleMs / 2);
             let tbResults: TestbenchResult = validateResults(timedExpectedResults[i]);
             if (!tbResults.success) {
+                // TODO: move this report to deferred callback
                 console.log(tbResults.failDescription);
+                $("#testbench-console").text(tbResults.failDescription);
+                // Pause circuit
+                $("button[name=pause]").trigger('click');
                 successDeferred.reject();
             }
         }
 
+        $("#testbench-console").text('Testbench succeded!');
         successDeferred.resolve();
     }
 
@@ -773,6 +782,7 @@ $(window).on("load", () => {
     });
 
     $("button[name=run-tb]").click(() => {
+        $("#testbench-console").text('Running testbench...');
         // TODO: study better syncronism mechanism
         if (runningTb && runningTb.state() === "pending") {
             runningTb.reject();
