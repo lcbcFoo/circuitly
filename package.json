@@ -19,6 +19,7 @@
     "base64-inline-loader": "^1.1.1",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
+    "bootstrap4": "0.0.1-security",
     "clipboard": "^2.0.4",
     "codemirror": "^5.48.2",
     "csv-parser": "^2.3.3",
