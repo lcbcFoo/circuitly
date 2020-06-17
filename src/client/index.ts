@@ -7,6 +7,7 @@ import * as utils from "../../circuitly-blocks/utils/utils.js";
 import FileSaver from "file-saver";
 import csv from "csv-parser";
 import fileReaderStream from "filereader-stream";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 //import { saveAs } from 'file-saver';
 
