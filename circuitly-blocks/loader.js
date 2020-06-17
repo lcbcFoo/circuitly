@@ -40,6 +40,7 @@ var options = {
 };
 
 var workspace = Blockly.inject(blocklyDiv, options);
+workspace.setTheme(Blockly.Themes.Dark);
 
 // Load circuitly blocks
 module_load(workspace);
