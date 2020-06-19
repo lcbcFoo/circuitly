@@ -5,13 +5,14 @@
     <body>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
               rel="stylesheet">
-        <div id="wrapper">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+        <div id="wrapper" style="display: flex; flex-direction: column; min-height: 100vh;">
             <header class="page-header">
                 <!--Navbar-->
                 <nav class="navbar navbar-expand-lg navbar-dark">
                     <!-- Navbar brand -->
                     <a class="navbar-brand" href="#"
-                                            style="font-family: Nunito;
+                                            style="font-family: Montserrat;
                                                         font-style: normal;
                                                         font-size: 32px;
                                                         color: #1AFFE3;">
@@ -23,7 +24,7 @@
                         <ul class="navbar-nav ml-auto">
                             <li class="nav-item active">
                                 <a class="nav-link" href="#"
-                                                    style="font-family: Comfortaa;
+                                                    style="font-family: Montserrat;
                                                                 font-style: normal;
                                                                 font-weight: normal;
                                                                 font-size: 24px;
@@ -35,7 +36,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#"
-                                                    style="font-family: Comfortaa;
+                                                    style="font-family: Montserrat;
                                                                 font-style: normal;
                                                                 font-weight: normal;
                                                                 font-size: 24px;
@@ -53,9 +54,9 @@
             </header>
             <div class="container-fluid">
                 <div class="row" style="padding: 10px;">
-                    <div class="col-md-6">
+                    <div class="col-md-7" style="border: 2px solid gray;">
                         <div class="blockly-editor">
-                            <div id="blockly-div" style="height: 700px; width: auto;"></div>
+                            <div id="blockly-div" style="height: 600px; width: auto;"></div>
                         </div>
                         <!-- Insert workspace XML here -->
                         <xml
@@ -80,106 +81,111 @@
                         <block type="signal_getter"></block>
                         <block type="splitter"></block>
                         <block type="concat"></block>
-                        <!-- <category name="1-bit Signals" colour="#a55b80"> -->
-                        <!-- <button text="Create signal" callbackKey="DECLARE_1BIT"></button> -->
-                        <!-- <button text="Delete signal" callbackKey="DELETE_1BIT"></button> -->
-                        <!-- <block type="signal_1bit_getter"></block> -->
-                        <!-- </category> -->
-                        <!-- <category name="2-bit Signals" colour="#a55b80"> -->
-                        <!-- <button text="Create signal" callbackKey="DECLARE_2BIT"></button> -->
-                        <!-- <button text="Delete signal" callbackKey="DELETE_2BIT"></button> -->
-                        <!-- <block type="signal_2bit_getter"></block> -->
-                        <!-- </category> -->
                         </category>
                         </xml>
                     </div>
-                    <div class="col-md-6">
-                        <div class="digitaljs-area" id="paper" style="background: blueviolet;"></div>
-                    </div>
-                </div>
-                <div class="row" style="padding: 10px;">
-                    <div class="col-md-6">
-                        <button name="compile" type="button" class="btn btn-success btn-compile">
-                            Compile circuit
-                        </button>
-                        <button name="run-tb" type="button" class="btn btn-success btn-tun-tb" disabled="true">
-                            Run testbench
-                        </button>
-                        <div class="symbola btn-group mr-2" role="group" aria-label="Saving and sharing">
-                            <button name="load_block" type="button" class="btn btn-secondary" title="Load a block from file"><i class="material-icons">add</i></button>
-                            <button name="load_workspace" type="button" class="btn btn-secondary" title="Load workspace from file"><i class="material-icons">folder_open</i></button>
-                            <button name="save" type="button" class="btn btn-secondary" title="Save workspace to file"><i class="material-icons">get_app</i></button>
-                        </div>
-                        <div style="padding: 10px;">
-                            Testbench inputs
-                            <input type="file" name="input-inputs-tb" accept=".csv"/>
-                        </div>
-                        <div style="padding: 10px;">
-                            Testbench validation
-                            <input type="file" name="input-results-tb" accept=".csv"/>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div id="toolbar">
-                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
-                                    <div class="symbola btn-group mr-2" role="group" aria-label="Time control">
-                                        <button name="pause" type="button" class="btn btn-secondary" title="Pause simulation" disabled="true"><i class="material-icons">pause</i></button>
-                                        <button name="resume" type="button" class="btn btn-secondary" title="Resume simulation" disabled="true"><i class="material-icons">play_arrow</i></button>
-                                        <button name="fastfw" type="button" class="btn btn-secondary" title="Fast-forward simulation" disabled="true"><i class="material-icons">fast_forward</i></button>
-                                        <button name="single" type="button" class="btn btn-secondary" title="Run single time step" disabled="true"><i class="material-icons">skip_next</i></button>
-                                        <button name="next" type="button" class="btn btn-secondary" title="Run until next event" disabled="true"><i class="material-icons">keyboard_arrow_right</i></button>
-                                    </div>
-                                    <div class="input-group mr-2">
-                                        <div class="input-group-prepend">
-                                            <span class="symbola input-group-text" title="Current tick"><i class="material-icons">access_time</i></span>
+                    <div class="col-md-5">
+                        <div class="row" style="padding-left: 10px;">
+                            <div class="col-md-4">
+                                <div
+                                    style="font-family: Montserrat;
+                                           font-size: 24px;
+                                           color: #21CD1E;">Testbench
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="tb-form">
+                                            <span class="tb-file-input">
+                                                    <i class="material-icons">publish</i><input id="tb-file-input" type="file" accept=".csv"/>
+                                            </span>
                                         </div>
-                                        <input type="text" class="form-control" disabled="disabled" id="tick" />
+                                    </div>
+                                    <div class="col-md-8 my-auto mr-0">
+                                        <span class="tb-filename">Testbench input table</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- <div id="monitor-buttons" class="row"> -->
-                        <!--     <div class="cell2"> -->
-                        <!--         <div id="monitorbox"> -->
-                        <!--             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar"> -->
-                        <!--                 <div class="symbola btn-group mr-2" role="group" aria-label="Scale control"> -->
-                        <!--                     <button name="ppt_up" type="button" class="btn btn-secondary" title="Increase pixels per tick" disabled="true"><i class="material-icons">add</i></button> -->
-                        <!--                     <button name="ppt_down" type="button" class="btn btn-secondary" title="Decrease pixels per tick" disabled="true"><i class="material-icons">remove</i></button> -->
-                        <!--                 </div> -->
-                        <!--                 <div class="input-group mr-2"> -->
-                        <!--                     <div class="input-group-prepend"> -->
-                        <!--                         <span class="input-group-text" title="Ticks per grid line">scale</span> -->
-                        <!--                     </div> -->
-                        <!--                     <input type="text" class="form-control" disabled="disabled" name="scale" /> -->
-                        <!--                 </div> -->
-                        <!--                 <div class="symbola btn-group mr-2" role="group" aria-label="Time control"> -->
-                        <!--                     <button name="live" type="button" class="btn btn-secondary" title="Live mode" disabled="true"><i class="material-icons">play_arrow</i></button> -->
-                        <!--                     <button name="left" type="button" class="btn btn-secondary" title="Move left" disabled="true"><i class="material-icons">keyboard_arrow_left</i></button> -->
-                        <!--                     <button name="right" type="button" class="btn btn-secondary" title="Move right" disabled="true"><i class="material-icons">keyboard_arrow_right</i></button> -->
-                        <!--                 </div> -->
-                        <!--                 <div class="input-group mr-2"> -->
-                        <!--                     <div class="input-group-prepend"> -->
-                        <!--                         <span class="input-group-text" title="Display range">range</span> -->
-                        <!--                     </div> -->
-                        <!--                     <input type="text" class="form-control" disabled="disabled" name="rangel" /> -->
-                        <!--                     <div class="input-group-prepend input-group-append"> -->
-                        <!--                         <span class="input-group-text">–</span> -->
-                        <!--                     </div> -->
-                        <!--                     <input type="text" class="form-control" disabled="disabled" name="rangeh" /> -->
-                        <!--                 </div> -->
-                        <!--             </div> -->
-                        <!--             <div id="monitor"></div> -->
-                        <!--         </div> -->
-                        <!--     </div> -->
-                        <!-- </div> -->
+                        <div class="row">
+                            <div id="testbench-console"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div id="testbench-console"></div>
+                    <div class="col-md-12">
+                        <button name="compile" type="button" class="btn-enabled mr-auto">
+                            Compile circuit
+                        </button>
+                        <button name="run-tb" type="button" class="btn-disabled" disabled="true">
+                            Run testbench
+                        </button>
+                        <div class="symbola btn-group" role="group" aria-label="Saving and sharing">
+                            <button name="load_block" type="button" class="custom-btn btn-secondary" accept=".xml" title="Load a block from file"><i class="material-icons">add</i></button>
+                            <button name="load_workspace" type="button" class="custom-btn btn-secondary" accept=".xml" title="Load workspace from file"><i class="material-icons">folder_open</i></button>
+                            <button name="save" type="button" class="custom-btn btn-secondary" title="Save workspace to file"><i class="material-icons">get_app</i></button>
+                        </div>
+                        <div id="toolbar">
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
+                                <div class="symbola btn-group mr-2" role="group" aria-label="Time control">
+                                    <button name="pause" type="button" class="custom-btn btn-secondary" title="Pause simulation" disabled="true"><i class="material-icons">pause</i></button>
+                                    <button name="resume" type="button" class="custom-btn btn-secondary" title="Resume simulation" disabled="true"><i class="material-icons">play_arrow</i></button>
+                                    <button name="fastfw" type="button" class="custom-btn btn-secondary" title="Fast-forward simulation" disabled="true"><i class="material-icons">fast_forward</i></button>
+                                    <button name="single" type="button" class="custom-btn btn-secondary" title="Run single time step" disabled="true"><i class="material-icons">skip_next</i></button>
+                                    <button name="next" type="button" class="custom-btn btn-secondary" title="Run until next event" disabled="true"><i class="material-icons">keyboard_arrow_right</i></button>
+                                </div>
+                                <div class="input-group mr-2">
+                                    <div class="input-group-prepend">
+                                        <span class="symbola input-group-text" title="Current tick"><i class="material-icons">access_time</i></span>
+                                    </div>
+                                    <input type="text" class="form-control" disabled="disabled" id="tick" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding-top: 10px;">
+                    <div class="col-md-7">
+                        <div class="digitaljs-area" id="paper" style="width: auto; border: 2px solid gray;"></div>
+                    </div>
+                    <div class="col-md-5">
+                        <div id="monitor-buttons" class="row" style="padding-left: 10px;">
+                            <div id="monitorbox">
+                                <div id="monitor"></div>
+                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar">
+                                    <div class="symbola btn-group mr-2" role="group" aria-label="Scale control">
+                                        <button name="ppt_up" type="button" class="custom-btn btn-secondary" title="Increase pixels per tick" disabled="true"><i class="material-icons">add</i></button>
+                                        <button name="ppt_down" type="button" class="custom-btn btn-secondary" title="Decrease pixels per tick" disabled="true"><i class="material-icons">remove</i></button>
+                                    </div>
+                                    <div class="input-group mr-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" title="Ticks per grid line">scale</span>
+                                        </div>
+                                        <input type="text" class="form-control" disabled="disabled" name="scale" />
+                                    </div>
+                                    <div class="symbola btn-group mr-2" role="group" aria-label="Time control">
+                                        <button name="live" type="button" class="custom-btn btn-secondary" title="Live mode" disabled="true"><i class="material-icons">play_arrow</i></button>
+                                        <button name="left" type="button" class="custom-btn btn-secondary" title="Move left" disabled="true"><i class="material-icons">keyboard_arrow_left</i></button>
+                                        <button name="right" type="button" class="custom-btn btn-secondary" title="Move right" disabled="true"><i class="material-icons">keyboard_arrow_right</i></button>
+                                    </div>
+                                    <div class="input-group mr-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" title="Display range">range</span>
+                                        </div>
+                                        <input type="text" class="form-control" disabled="disabled" name="rangel" />
+                                        <div class="input-group-prepend input-group-append">
+                                            <span class="input-group-text">–</span>
+                                        </div>
+                                        <input type="text" class="form-control" disabled="disabled" name="rangeh" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
-                    <textarea id="text-code" style="width: 949px; height: 219px;"></textarea>
+                    <textarea id="text-code"></textarea>
                 </div>
             </div>
         </div>

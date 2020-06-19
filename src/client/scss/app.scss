@@ -1,13 +1,22 @@
 @import "~bootstrap/scss/bootstrap";
 
+$dark-high: #121212;
+$dark-medium: #313131;
+$dark-low: #454545;
+$brighter-highest: #f2f2f2;
+$brighter-high: #d2d2d2;
+$brighter-medium: #c0c0c0;
+$brighter-low: #a0a0a0;
+$green-one: #27AE60;
+$green-three: #6FCF97;
+
 #paper, #editor, #monitorbox {
     box-sizing: border-box;
     overflow: auto;
 }
 
 #toolbar {
-    padding: 5px;
-    border-bottom: 5px solid #eee;
+    border-bottom: 5px solid $dark-medium;
     box-sizing: border-box;
     position: relative;
 }
@@ -29,9 +38,9 @@ input#tick {
 
 div#monitorbox > div.btn-toolbar {
     position: sticky;
-    background: white;
+    background: $dark-medium;
     input[type=text] {
-        background: white;
+        background: $brighter-medium;
     }
     input[name=scale] {
         width: 4em;
@@ -49,11 +58,21 @@ div#monitorbox > div.btn-toolbar {
     font-family: "Symbola", $font-family-sans-serif;
 }
 
+#monitor {
+    border: 3px solid #212121;
+    background: #e3e3e3;
+}
+
 #monitor > table button {
     @extend .btn;
     @extend .btn-sm;
     @extend .btn-warning;
     font-size: 1.2em;
+    background: palevioletred;
+}
+
+#monitor>table button:hover {
+    background: #C15151;
 }
 
 #monitor > table td {
@@ -61,25 +80,29 @@ div#monitorbox > div.btn-toolbar {
     &:last-of-type {
         padding-right: 0em;
     }
-    font-size: 1.5em;
+    font-size: 1.2em;
+    height: 2.1em;
 }
 
 table.monitor td.name {
-    font-size: 1.5em;
+    font-size: 1.6em;
+    height: 2.1em;
+    color: $dark-high;
 }
 
 #monitor > table input[name=trigger] {
     @extend .form-control;
     @extend .form-control-sm;
     width: 5em;
-    font-size: 1.4em;
-    padding: 0em 0.4em;
+    height: 2.1em;
+    font-size: 1.2em;
 };
 
 #monitor > table select {
     @extend .form-control;
     @extend .form-control-sm;
-    font-size: 1em;
+    font-size: 1.2em;
+    height: 2.1em;
     width: auto;
     padding: 0;
     &[name=trigger] {
@@ -88,51 +111,94 @@ table.monitor td.name {
     }
 }
 
-// Grid tests
-* {
-  box-sizing: border-box;
+div#monitorbox>div.btn-toolbar input[name=scale],
+div#monitorbox>div.btn-toolbar input[name=rangeh],
+input#tick {
+    width: 4em;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
 }
-body {
-  margin: 0;
-}
-.row{
-  display:table;
-  padding-right:10px;
-  padding-left:10px;
-  width:100%;
-  border-spacing: 5px;
-}
-.cell{
-  width:8%;
-  display:table-cell;
-  height:50px;
-}
-.cell2{
-  width:50%;
-  display:table-cell;
-  height:50px;
-}
-#i5sw{
-  float:none;
-  border-radius:2px;
-}
-#util-buttons{
-  height:70px;
-}
-#monitor-buttons{
-  height:50px;
-}
-@media (max-width: 768px){
-  .cell{
-    width:100%;
-    display:block;
-  }
+
+.input-group>.input-group-prepend>.input-group-text {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background: $brighter-high;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
 }
 
 .page-header {
-    background: #454041;
+    background: $dark-high;
 }
 
 #wrapper {
-    background: #212121;
+    background: $dark-medium;
+}
+
+.custom-btn {
+    @extend .btn;
+    border-radius: 10px;
+}
+
+.btn-main {
+    @extend .btn;
+    border-radius: 10px;
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    text-align: center;
+    color: $dark-high;
+    letter-spacing: 0.75px;
+    color: $dark-high;
+}
+
+.btn-disabled {
+    @extend .btn-main;
+    background: $brighter-highest;
+    mix-blend-mode: normal;
+    opacity: 0.38;
+    text-shadow: 1px 3px 5px rgba(0, 0, 0, 0.25);
+}
+
+.btn-enabled {
+    @extend .btn-main;
+    background: $green-three;
+}
+
+// Testbench input
+.tb-file-input {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    text-align: center;
+    color: $dark-high;
+    letter-spacing: 0.75px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: $green-three;
+    display: block;
+    padding: 5px;
+}
+.tb-file-input input[type="file"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    display: block;
+    cursor: pointer;
+}
+.tb-filename {
+    text-align: center;
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    color: $brighter-medium;
 }
