@@ -39,7 +39,10 @@ var options = {
     oneBasedIndex : true
 };
 
+
 var workspace = Blockly.inject(blocklyDiv, options);
+// TODO: create a more suitable theme. Reference 
+// https://developers.google.com/blockly/guides/configure/web/themes
 workspace.setTheme(Blockly.Themes.Dark);
 
 // Load circuitly blocks
