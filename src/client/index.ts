@@ -787,7 +787,7 @@ $(window).on("load", () => {
     }
 
     // TODO: implement csv loader for inputs / expeted values
-    $("input[name=input-tb-csv]").change((e: JQuery.ChangeEvent) => {
+    $(".tb-file-input").change((e: JQuery.ChangeEvent) => {
         let csvFile = (<HTMLInputElement>e.target).files[0];
         let read: Object[] = [];
         fileReaderStream(csvFile)
