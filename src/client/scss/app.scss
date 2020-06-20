@@ -167,6 +167,13 @@ input#tick {
 }
 
 // Testbench input
+.tb-form {
+    display: inline-block;
+    height: 30px;
+    text-align: center;
+    width: 100px;
+}
+
 .tb-file-input {
     font-family: 'Montserrat';
     font-style: normal;
