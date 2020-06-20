@@ -9,6 +9,7 @@ import csv from "csv-parser";
 import fileReaderStream from "filereader-stream";
 import * as types from "./types/types";
 import { Testbench } from "./testbench/testbench";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 //import { saveAs } from 'file-saver';
 
@@ -268,9 +269,8 @@ $(window).on("load", () => {
         // TODO: better way to wait for digitaljs load circuit into UI
         await delay(2000);
         identifyCircuitElements(data);
-        testbench = new Testbench(ioDevices);
-        // Allow users to run testbench
-        $("button[name=run-tb]").prop("disabled", false);
+	testbench = new Testbench(ioDevices);
+        enableRunTbButton();
     }
 
     function runquery() {
@@ -297,6 +297,18 @@ $(window).on("load", () => {
         });
     }
 
+    function disableRunTbButton() {
+        $("button[name=run-tb]").prop("disabled", true);
+        $("button[name=run-tb]").addClass("btn-disabled");
+        $("button[name=run-tb]").removeClass("btn-enabled");
+    }
+
+    function enableRunTbButton() {
+        $("button[name=run-tb]").prop("disabled", false);
+        $("button[name=run-tb]").addClass("btn-enabled");
+        $("button[name=run-tb]").removeClass("btn-disabled");
+    }
+
     $("button[name=compile]").click((e: JQuery.Event) => {
         // TODO: study better syncronism mechanism
         // Ensure there is no testbench running
@@ -305,7 +317,7 @@ $(window).on("load", () => {
         }
         e.preventDefault();
         // Disable testbench button until circuit is properly loaded
-        $("button[name=run-tb]").prop("disabled", true);
+        disableRunTbButton();
         runquery();
     });
 
@@ -785,6 +797,14 @@ $(window).on("load", () => {
                 testbenchStatements = read;
             });
     });
+    
+    // Automatic update tb filename span text
+    $(document).ready( function() {
+		$('.tb-file-input input[type="file"]').change( function() {
+			var filename = (<string>$(this).val()).replace(/\\/g, '/').replace(/.*\//, '');
+			$('.tb-filename').html(filename);
+		});
+	});
 
     $("button[name=run-tb]").click(() => {
         $("#testbench-console").text("Running testbench...");
@@ -793,7 +813,7 @@ $(window).on("load", () => {
             runningTb.reject();
         }
         // Disable run-tb button until tb run is finished or cancelled
-        $("button[name=run-tb]").prop("disabled", true);
+        disableRunTbButton();
         runningTb = JQuery.Deferred();
         successDeferred = JQuery.Deferred();
 
@@ -808,7 +828,7 @@ $(window).on("load", () => {
         successDeferred.always(function() {
             console.log("Testbench finished");
             // Allow users to run testbench
-            $("button[name=run-tb]").prop("disabled", false);
+            enableRunTbButton();
         });
 
         runTestbench(successDeferred, runningTb.promise());
