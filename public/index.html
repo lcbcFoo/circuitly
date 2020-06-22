@@ -20,65 +20,38 @@
                     </a>
                     <!-- Collapsible content -->
                     <div class="collapse navbar-collapse w-100 order-3 dual-collapse2" id="basicExampleNav">
-                        <!-- Links -->
-                        <ul class="navbar-nav ml-auto">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#"
-                                                    style="font-family: Montserrat;
-                                                                font-style: normal;
-                                                                font-weight: normal;
-                                                                font-size: 24px;
-                                                                line-height: 27px;
-                                                                color: #21CD1E;">
-                                    Development
-                                    <span class="sr-only">(current)</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"
-                                                    style="font-family: Montserrat;
-                                                                font-style: normal;
-                                                                font-weight: normal;
-                                                                font-size: 24px;
-                                                                line-height: 27px;
-                                                                color: #FF6363;">
-                                    Testbench
-                                </a>
-                            </li>
-                        </ul>
-                        <!-- Links -->
                     </div>
                     <!-- Collapsible content -->
                 </nav>
                 <!--/.Navbar-->
             </header>
-            <div class="container-fluid">
-                <div class="row" style="padding: 10px;">
-                    <div class="col-md-7">
+            <div class="container-fluid" style="height: 100%;">
+                <div class="row" style="padding: 10px; height: 70%;">
+                    <div class="col-md-6">
                         <div
                             style="font-family: Montserrat;
                                    font-size: 24px;
                                    color: #A1FFE3;">Block it up!
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div
                             style="padding-left: 10px;
                                    font-family: Montserrat;
                                    font-size: 24px;
-                                   color: #7AFF77;">Testbench
+                                   color: #7AFF77;">Simulation
                         </div>
                     </div>
                 </div>
-                <div class="row" style="padding-left: 10px; padding-bottom: 10px;">
-                    <div class="col-md-7" style="border: 2px solid gray;">
+                <div class="row blockly-sim-row">
+                    <div class="col-md-6 blockly-col">
                         <div class="blockly-editor">
-                            <div id="blockly-div" style="height: 600px; width: auto;"></div>
+                            <div id="blockly-div"></div>
                         </div>
                         <!-- Insert workspace XML here -->
                         <xml
                             xmlns="https://developers.google.com/blockly/xml" id="lesson_00_workspace" style="display: none">
-                        <block type="module" id="Mh^5)mF-!1=cHoFiwS7q" x="138" y="62">
+                        <block type="module" id="Mh^5)mF-!1=cHoFiwS7q" x="40" y="60">
                         <field name="NAME">module_name</field>
                         </block>
                         </xml>
@@ -101,33 +74,14 @@
                         </category>
                         </xml>
                     </div>
-                    <div class="col-md-5">
-                        <div class="row my-auto" style="padding: 10px;">
-                            <div class="col-md-3">
-                                <button name="run-tb" type="button" class="btn-disabled mr-auto" disabled="true">
-                                    Run testbench
-                                </button>
-                            </div>
-                            <div class="col-md-6 my-auto">
-                                <div class="flex-row d-flex my-auto">
-                                    <div class="tb-filename my-2">Testbench I/O table</div>
-                                    <div class="tb-form ml-3">
-                                        <div class="tb-file-input">
-                                            <i class="material-icons">publish</i><input id="tb-file-input" type="file" accept=".csv"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 my-auto ml-0">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div id="testbench-console"></div>
+                    <div class="col-md-6">
+                        <div class="digitaljs-area testimonial-group">
+                            <div id="paper"></div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-7">
+                    <div class="col-md-6">
                         <div class="row" style="padding-left: 10px;">
                             <button name="compile" type="button" class="ml-0 btn-enabled">
                                 Compile circuit
@@ -156,7 +110,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div
                             style="padding-left: 10px;
                                    font-family: Montserrat;
@@ -166,10 +120,31 @@
                     </div>
                 </div>
                 <div class="row" style="padding-top: 10px;">
-                    <div class="col-md-7">
-                        <div class="digitaljs-area" id="paper" style="width: auto; border: 3px solid #212121;"></div>
+                    <div class="col-md-6">
+                        <div class="row my-auto">
+                            <div class="col-md-3">
+                                <button name="run-tb" type="button" class="btn-disabled mr-auto" disabled="true">
+                                    Run testbench
+                                </button>
+                            </div>
+                            <div class="col-md-6 my-auto">
+                                <div class="flex-row d-flex my-auto">
+                                    <div class="tb-filename my-2">Testbench I/O table</div>
+                                    <div class="tb-form ml-3">
+                                        <div class="tb-file-input">
+                                            <i class="material-icons">publish</i><input id="tb-file-input" type="file" accept=".csv"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 my-auto ml-0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="testbench-console"></div>
+                        </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div id="monitor-buttons">
                             <div id="monitorbox" style="padding-left: 10px;">
                                 <div id="monitor"></div>

@@ -1,5 +1,6 @@
 @import "~bootstrap/scss/bootstrap";
 
+// Colors
 $dark-high: #121212;
 $dark-medium: #313131;
 $dark-low: #454545;
@@ -9,6 +10,10 @@ $brighter-medium: #c0c0c0;
 $brighter-low: #a0a0a0;
 $green-one: #27AE60;
 $green-three: #6FCF97;
+
+// Sizes
+$blockly-workspace-height: 600px;
+
 
 #paper, #editor, #monitorbox {
     box-sizing: border-box;
@@ -208,4 +213,28 @@ input#tick {
     font-weight: normal;
     font-size: 14px;
     color: $brighter-medium;
+}
+
+.blockly-sim-row {
+    padding-left: 10px;
+    padding-bottom: 10px;
+    height: fit-content;
+}
+
+.blockly-col {
+    border: 2px solid gray;
+}
+
+#blockly-div {
+    height: $blockly-workspace-height;
+    width: auto;
+}
+
+.digitaljs-area {
+    width: auto;
+    border: 3px solid gray;
+    max-height: $blockly-workspace-height;
+    float: none;
+    white-space: nowrap;
+    display: flex;
 }
