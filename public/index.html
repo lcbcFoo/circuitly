@@ -80,7 +80,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="padding-bottom: 10px;">
                     <div class="col-md-6">
                         <div class="row" style="padding-left: 10px;">
                             <button name="compile" type="button" class="ml-0 btn-enabled">
@@ -111,6 +111,18 @@
                         </div>
                     </div>
                     <div class="col-md-6">
+                    </div>
+                </div>
+                <div class="row" style="border-top: 1px solid #212121; padding-top: 10px;">
+                    <div class="col-md-6">
+                        <div
+                            style="padding-left: 10px;
+                                   font-family: Montserrat;
+                                   font-size: 24px;
+                                   color: lightcyan;">Testbench
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div
                             style="padding-left: 10px;
                                    font-family: Montserrat;
@@ -127,7 +139,7 @@
                                     Run testbench
                                 </button>
                             </div>
-                            <div class="col-md-6 my-auto">
+                            <div class="col-md-5 my-auto">
                                 <div class="flex-row d-flex my-auto">
                                     <div class="tb-filename my-2">Testbench I/O table</div>
                                     <div class="tb-form ml-3">
@@ -137,11 +149,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 my-auto ml-0">
+                            <div class="col-md-4 my-auto ml-0 tb-summary-wrapper">
+                                <div id="tb-result-summary"></div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div id="testbench-console"></div>
+                        <div class="row" style="padding-top: 10px;">
+                            <div id="testbench-result-wrapper"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
