@@ -71,3 +71,15 @@ export function get_temp_name(name) {
     return name + '_' + temp;
 }
 
+// Synthesize primitive systemverilog logic blocks (will show the common used
+// gates on digitaljs instead of a square box that allows to look inside it)
+let PRETTY_SIM = true;
+
+export function setPrettySimMode(bool) {
+    PRETTY_SIM = bool;
+}
+
+export function isPrettySimMode() {
+    return PRETTY_SIM;
+}
+

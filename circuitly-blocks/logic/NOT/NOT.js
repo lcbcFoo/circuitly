@@ -21,20 +21,26 @@ export function load(workspace) {
     };
 
     Blockly.Python["NOT"] = function(block) {
-        var outSignalBlock = block.getInput('b').connection.targetBlock();
+        let outSignalBlock = block.getInput('b').connection.targetBlock();
+        let val_b = Blockly.Python.valueToCode(block, "b", Blockly.Python.ORDER_ATOMIC);
+        let val_a = Blockly.Python.valueToCode(block, "a", Blockly.Python.ORDER_ATOMIC);
+
+        if (utils.isPrettySimMode()) {
+            return 'assign ' + val_b + ' = ~' + val_a + ';\n';
+        }
+
+        let outBitLen;
         if (outSignalBlock) {
-            var sizeOut = outSignalBlock.getFieldValue('SIZE_SELECTION');
-            var outBitLen = utils.getSignalBitLen(sizeOut);
+            let sizeOut = outSignalBlock.getFieldValue('SIZE_SELECTION');
+            outBitLen = utils.getSignalBitLen(sizeOut);
         }
         else {
-            var outBitLen = 1;
+            outBitLen = 1;
         }
-        var block_name = utils.get_temp_name("NOT");
-        var code = "  NOT #(" + outBitLen + ") "+ block_name + " (";
-        var val_a = Blockly.Python.valueToCode(block, "a", Blockly.Python.ORDER_ATOMIC);
+        let block_name = utils.get_temp_name("NOT");
+        let code = "  NOT #(" + outBitLen + ") "+ block_name + " (";
         code += val_a;
         code += ", "
-        var val_b = Blockly.Python.valueToCode(block, "b", Blockly.Python.ORDER_ATOMIC);
         code += val_b;
         code += ");\n";
         return code;
