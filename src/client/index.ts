@@ -367,6 +367,7 @@ $(window).on("load", () => {
             );
             selectFileDom.type = "file";
             selectFileDom.id = "select_file";
+            selectFileDom.accept = ".xml";
 
             var selectFileWrapperDom = document.createElement("DIV");
             selectFileWrapperDom.id = "select_file_wrapper";
