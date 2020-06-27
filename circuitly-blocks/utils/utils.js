@@ -22,6 +22,7 @@ export const COLOUR_8BIT = 190;
 export const COLOUR_16BIT = 170;
 export const COLOUR_32BIT = 150;
 export const COLOUR_64BIT = 130;
+export const COLOUR_ASSIGN = 200;
 
 export const signalTypesDefinitions = [
     {'type' : 'SIGNAL_1BIT', 'val' : SIGNAL_1BIT, 'colour' : COLOUR_1BIT},
@@ -36,7 +37,8 @@ export const signalTypesDefinitions = [
 
 export const reservedTypes = [
     'module', 'splitter', 'concat', 'NAND', 'signal_getter',
-    'connections_designer', 'create_signal', 'module_connection'
+    'connections_designer', 'create_signal', 'module_connection',
+    'assign'
 ];
 
 // Receives a 'type' of signal - for example string "SIGNAL_1BIT"

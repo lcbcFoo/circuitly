@@ -6,6 +6,7 @@ import { load as signal_getter_load } from './blocks/signal_getter/signal_getter
 import { load as connections_designer_load } from './blocks/connections_designer/connections_designer.js'
 import { load as splitter_loader } from './blocks/splitter/splitter.js'
 import { load as concat_loader } from './blocks/concat/concat.js'
+import { load as assign_loader } from './blocks/assign/assign.js'
 import { load as NAND_loader } from './blocks/NAND/NAND.js'
 
 //////////////////////////////////////////////////////////////////////////////
@@ -53,6 +54,7 @@ signal_getter_load(workspace);
 connections_designer_load(workspace);
 splitter_loader(workspace);
 concat_loader(workspace);
+assign_loader(workspace);
 NAND_loader(workspace);
 
 // TODO: this should be able to search for logic models in logic directory
