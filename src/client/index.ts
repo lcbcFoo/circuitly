@@ -280,6 +280,7 @@ $(window).on("load", () => {
         await delay(2000);
         let devs = identifyCircuitElements(data);
         testbench.setIoDevices(devs);
+        testbench.setCircuit(circuit);
         enableRunTbButton();
     }
 
@@ -665,8 +666,7 @@ $(window).on("load", () => {
             enableRunTbButton();
         });
 
-        // Start circuit and run testbench
-        $("button[name=resume]").trigger('click');
+        // Run testbench
         testbench.runTestbench(successDeferred, runningTb.promise());
     });
 
