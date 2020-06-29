@@ -1,16 +1,24 @@
 /// <reference types="jquery" />
 import * as types from "../types/types";
+import * as digitaljs from "digitaljs";
 export declare class Testbench {
+    circuit: digitaljs.Circuit;
     ioDevices: types.IODevice[];
     testbenchStatements: Object[];
     testbenchResults: Object[];
     delay: (ms: number) => Promise<unknown>;
-    simTimescaleMs: number;
+    clockFreqInTicks: number;
+    clockRisingEdgeListeners: (() => void)[];
+    clockFallingEdgeListeners: (() => void)[];
     fullRun: boolean;
     iterationCallback: (row: types.TestbenchRow) => void;
+    clockTick: number;
     constructor(iterationCallback: (row: types.TestbenchRow) => void);
     setStatements(statements: Object[]): void;
     setIoDevices(ioDevices: types.IODevice[]): void;
+    subscribe(event: string, callback: () => void): void;
+    trigger(event: string): void;
+    setCircuit(circuit: digitaljs.Circuit): void;
     setIOButtonValue(button: HTMLElement, bool: boolean): void;
     setIONumValue(numvalue: HTMLElement, hexval: string): void;
     getIOLampValue(lamp: HTMLElement): "0x1" | "0x0";

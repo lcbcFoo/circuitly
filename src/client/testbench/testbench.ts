@@ -1,16 +1,22 @@
 import * as types from "../types/types";
+import * as digitaljs from "digitaljs";
 
 export class Testbench {
+    circuit: digitaljs.Circuit;
     ioDevices: types.IODevice[];
     testbenchStatements: Object[] = [];
     testbenchResults: Object[] = [];
     delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-    simTimescaleMs = 1000;
+    clockFreqInTicks: number = 200;
+    clockRisingEdgeListeners: (() => void)[] = [];
+    clockFallingEdgeListeners: (() => void)[] = [];
     fullRun: boolean = true;
     iterationCallback: (row: types.TestbenchRow) => void;
+    clockTick: number = 0;
 
     constructor(iterationCallback: (row: types.TestbenchRow) => void) {
         this.iterationCallback = iterationCallback;
+        this.circuit = null;
     }
 
     setStatements(statements: Object[]) {
@@ -20,6 +26,56 @@ export class Testbench {
 
     setIoDevices(ioDevices: types.IODevice[]) {
         this.ioDevices = ioDevices;
+    }
+
+    subscribe(event: string, callback: () => void) {
+        switch (event) {
+            case "risingEdge":
+                this.clockRisingEdgeListeners.push(callback);
+                break;
+            case "fallingEdge":
+                this.clockFallingEdgeListeners.push(callback);
+                break;
+            default:
+                break;
+        }
+    }
+
+    trigger(event: string) {
+        switch (event) {
+            case "risingEdge":
+                this.clockRisingEdgeListeners.forEach(listener => {
+                    listener();
+                });
+                break;
+            case "fallingEdge":
+                this.clockFallingEdgeListeners.forEach(listener => {
+                    listener();
+                });
+                break;
+            default:
+                break;
+        }
+    }
+
+    setCircuit(circuit: digitaljs.Circuit) {
+        this.circuit = circuit;
+        this.clockTick = 0;
+        // Register callback for circuit tick counter
+        this.circuit.on("postUpdateGates", (tick: number) => {
+            this.clockTick = tick;
+            if (this.clockTick % this.clockFreqInTicks == 0) {
+                // rising-edge
+                this.trigger("risingEdge");
+            }
+            if (
+                this.clockTick % this.clockFreqInTicks ==
+                this.clockFreqInTicks / 2
+            ) {
+                // falling-edge
+                this.trigger("fallingEdge");
+            }
+        });
     }
 
     /* Set circuit input button to high (bool=true) / low (bool=false)
@@ -164,8 +220,8 @@ export class Testbench {
 
                 if (!result) {
                     entryResult.success = false;
-                    entryResult.signalName = '<invalid>';
-                    entryResult.value = 'x';
+                    entryResult.signalName = "<invalid>";
+                    entryResult.value = "x";
                     entryResult.failDescription =
                         'There is no output signal named "';
                     entryResult.failDescription +=
@@ -180,9 +236,9 @@ export class Testbench {
                 if (+expected.val !== +result.val) {
                     entryResult.success = false;
                     entryResult.failDescription =
-                        'Different value detected for output \'';
+                        "Different value detected for output '";
                     entryResult.failDescription +=
-                        expected.name + '\'. Expected ';
+                        expected.name + "'. Expected ";
                     entryResult.failDescription += expected.val;
                     entryResult.failDescription +=
                         ". Found: " + result.val + ".";
@@ -231,10 +287,10 @@ export class Testbench {
         inputs: types.NameVal[],
         tbResults: types.TestbenchOutputResult[]
     ): types.TestbenchRow {
-       let rowObj: types.TestbenchRow = new types.TestbenchRow();
-       rowObj.inputs = inputs;
-       rowObj.tbResults = tbResults;
-       return rowObj;
+        let rowObj: types.TestbenchRow = new types.TestbenchRow();
+        rowObj.inputs = inputs;
+        rowObj.tbResults = tbResults;
+        return rowObj;
     }
 
     async runTestbench(
@@ -272,15 +328,40 @@ export class Testbench {
             }
         });
 
+        // Resolvers to promise that waits rising edge to occur
+        let outsideResolve: () => void;
+        let outsideReject: () => void;
+        // Callback to rising edge event
+        let waitRisingEdge = () => {
+            if (runningPromise.state() === "rejected") {
+                return outsideReject();
+            }
+            return outsideResolve();
+        };
+        // wait for first clock rising edge - it initializes the circuit
+        // signals
+        this.circuit.start();
+        let waitClockCycle = () => {
+            return new Promise(
+                (resolve: () => void, reject: () => void) => {
+                    outsideResolve = resolve;
+                    outsideReject = reject;
+                    this.subscribe("risingEdge", waitRisingEdge);
+                }
+            );
+        };
+        await waitClockCycle();
         // Run testbench statements and collect results produced
         for (let i = 0; i < timedInputs.length; i++) {
+            // Check if testbench was cancelled
             if (runningPromise.state() === "rejected") {
                 successDeferred.reject();
                 return;
             }
-            await this.delay(this.simTimescaleMs / 2);
+
+            // Set inputs and wait for next rising edge to collect results
             this.setInputs(timedInputs[i]);
-            await this.delay(this.simTimescaleMs / 2);
+            await waitClockCycle();
             let rowResults = this.validateResults(timedExpectedResults[i], i);
             tbResults.push(rowResults);
             let tbRow = this.genResultTableRow(timedInputs[i], rowResults);
@@ -297,7 +378,7 @@ export class Testbench {
             }
         }
 
-        console.log('result table:');
+        console.log("result table:");
         console.log(resultTable);
         // Check if any error was found
         for (let i = 0; i < resultTable.length; i++) {
