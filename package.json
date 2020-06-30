@@ -23,7 +23,7 @@
     "clipboard": "^2.0.4",
     "codemirror": "^5.48.2",
     "csv-parser": "^2.3.3",
-    "digitaljs": "^0.5.2",
+    "digitaljs": "0.5.2",
     "express": "^4.17.1",
     "file-saver": "^2.0.2",
     "filereader-stream": "^2.0.0",
