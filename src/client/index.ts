@@ -89,9 +89,6 @@ $(window).on("load", () => {
         }
         let code = Blockly.Python.workspaceToCode(workspace);
         svFiles["_input.sv"] = code;
-        (<HTMLTextAreaElement>(
-            document.getElementById("text-code")
-        )).value = code;
         return svFiles;
     }
     //workspace.addChangeListener(myUpdateFunction);
