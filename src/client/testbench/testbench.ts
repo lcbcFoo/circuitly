@@ -7,12 +7,15 @@ export class Testbench {
     testbenchStatements: Object[] = [];
     testbenchResults: Object[] = [];
     delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-    clockFreqInTicks: number = 200;
     clockRisingEdgeListeners: (() => void)[] = [];
     clockFallingEdgeListeners: (() => void)[] = [];
     fullRun: boolean = true;
     iterationCallback: (row: types.TestbenchRow) => void;
     clockTick: number = 0;
+    // For now only supports a single clock
+    clockDevice: types.IODevice = null;
+    tbClockCycleInTicks: number = 50;
+    DEFAULT_CLOCK_CYCLE_TICKS: number = 200;
 
     constructor(iterationCallback: (row: types.TestbenchRow) => void) {
         this.iterationCallback = iterationCallback;
@@ -26,13 +29,27 @@ export class Testbench {
 
     setIoDevices(ioDevices: types.IODevice[]) {
         this.ioDevices = ioDevices;
+        this.clockDevice = this.findClockDevice(ioDevices);
+    }
+
+    findClockDevice(ioDevices: types.IODevice[]): types.IODevice {
+        let clocks = ioDevices.filter((device) => {
+            return device.typeofelement === "$clock";
+        });
+        if (clocks.length > 0) {
+            return clocks[0];
+        } else {
+            return null;
+        }
     }
 
     subscribe(event: string, callback: () => void) {
         switch (event) {
+            /* Subscribe for a single rising edge event */
             case "risingEdge":
                 this.clockRisingEdgeListeners.push(callback);
                 break;
+            /* Subscribe for a single falling edge event */
             case "fallingEdge":
                 this.clockFallingEdgeListeners.push(callback);
                 break;
@@ -41,17 +58,22 @@ export class Testbench {
         }
     }
 
+    /* Trigger event */
     trigger(event: string) {
         switch (event) {
             case "risingEdge":
                 this.clockRisingEdgeListeners.forEach(listener => {
                     listener();
                 });
+                // Clear rising edge listeners
+                this.clockRisingEdgeListeners = [];
                 break;
             case "fallingEdge":
                 this.clockFallingEdgeListeners.forEach(listener => {
                     listener();
                 });
+                // Clear falling edge listeners
+                this.clockFallingEdgeListeners = [];
                 break;
             default:
                 break;
@@ -64,13 +86,16 @@ export class Testbench {
         // Register callback for circuit tick counter
         this.circuit.on("postUpdateGates", (tick: number) => {
             this.clockTick = tick;
-            if (this.clockTick % this.clockFreqInTicks == 0) {
+            if (this.clockTick === 0) {
+                return;
+            }
+            if (this.clockTick % this.tbClockCycleInTicks === 0) {
                 // rising-edge
                 this.trigger("risingEdge");
             }
             if (
-                this.clockTick % this.clockFreqInTicks ==
-                this.clockFreqInTicks / 2
+                this.clockTick % this.tbClockCycleInTicks ===
+                this.tbClockCycleInTicks / 2
             ) {
                 // falling-edge
                 this.trigger("fallingEdge");
@@ -94,6 +119,15 @@ export class Testbench {
             if ($(button).hasClass("live")) {
                 $(button).trigger("click");
             }
+        }
+    }
+
+    /* Set clock frequency in ticks */
+    setClockFreqTicks(clockDevice: types.IODevice, freqInTicks: number) {
+        if (clockDevice) {
+            // We must divide by 2 since the input is related to half-cycle
+            $(clockDevice.element).val(Math.round(freqInTicks / 2));
+            $(clockDevice.element).trigger("change");
         }
     }
 
@@ -328,46 +362,70 @@ export class Testbench {
             }
         });
 
+        // Set clock to tbTimescaleInTicks during testbench run
+        this.setClockFreqTicks(this.clockDevice, this.tbClockCycleInTicks);
+
         // Resolvers to promise that waits rising edge to occur
         let outsideResolve: () => void;
         let outsideReject: () => void;
-        // Callback to rising edge event
-        let waitRisingEdge = () => {
+
+        // Callback to edge event
+        let waitClockEdgeCallback = () => {
             if (runningPromise.state() === "rejected") {
                 return outsideReject();
             }
             return outsideResolve();
         };
-        // wait for first clock rising edge - it initializes the circuit
-        // signals
-        this.circuit.start();
-        let waitClockCycle = () => {
+        // Subscribe and wait for rising edge auxiliar function
+        let waitRisingEdge = () => {
             return new Promise(
-                (resolve: () => void, reject: () => void) => {
+                (resolve, reject) => {
                     outsideResolve = resolve;
                     outsideReject = reject;
-                    this.subscribe("risingEdge", waitRisingEdge);
+                    this.subscribe("risingEdge", waitClockEdgeCallback);
                 }
             );
         };
+        // Subscribe and wait for falling edge auxiliar function
+        let waitFallingEdge = () => {
+            return new Promise(
+                (resolve, reject) => {
+                    outsideResolve = resolve;
+                    outsideReject = reject;
+                    this.subscribe("fallingEdge", waitClockEdgeCallback);
+                }
+            );
+        };
+        // Subscribe and wait for entire cycle auxiliar function
+        let waitClockCycle = async () => {
+            await waitRisingEdge();
+            await waitRisingEdge();
+        };
+
+        // Ensure we wait at least full clock cycle (2 rising edges)
+        // it initializes the circuit signals
+        this.circuit.start();
         await waitClockCycle();
+        
         // Run testbench statements and collect results produced
         for (let i = 0; i < timedInputs.length; i++) {
             // Check if testbench was cancelled
             if (runningPromise.state() === "rejected") {
-                successDeferred.reject();
+                this.failed(successDeferred);
                 return;
             }
 
             // Set inputs and wait for next rising edge to collect results
             this.setInputs(timedInputs[i]);
-            await waitClockCycle();
+            await waitRisingEdge();
             let rowResults = this.validateResults(timedExpectedResults[i], i);
             tbResults.push(rowResults);
             let tbRow = this.genResultTableRow(timedInputs[i], rowResults);
             resultTable.push(tbRow);
+
             // Call external callback to update UI
             this.iterationCallback(tbRow);
+
             // We want to check if we should stop testbench because of an error
             // (when in stop at first eror mode). It is enough to check the
             // first item of the last tb results row, it is guaranteed it will
@@ -375,11 +433,10 @@ export class Testbench {
             let lastEntry: types.TestbenchOutputResult = rowResults[0];
             if (!this.fullRun && !lastEntry.success) {
                 this.failed(successDeferred);
+                return;
             }
         }
 
-        console.log("result table:");
-        console.log(resultTable);
         // Check if any error was found
         for (let i = 0; i < resultTable.length; i++) {
             let outputs = resultTable[i].tbResults;
@@ -387,14 +444,23 @@ export class Testbench {
                 // If any signal failed
                 if (!outputs[j].success) {
                     this.failed(successDeferred);
+                    return;
                 }
             }
         }
-        console.log(resultTable);
         successDeferred.resolve();
+        this.finishTb(true);
     }
 
     failed(successDeferred: JQueryDeferred<void>) {
         successDeferred.reject();
+        this.finishTb(false);
+    }
+
+    finishTb(isSuccess: boolean) {
+        // Return clock to default tick freq
+        this.setClockFreqTicks(this.clockDevice, this.DEFAULT_CLOCK_CYCLE_TICKS);
+        $(window).trigger('testbenchFinished', [isSuccess]);
+        console.log('finishtb function: ' + isSuccess);
     }
 }

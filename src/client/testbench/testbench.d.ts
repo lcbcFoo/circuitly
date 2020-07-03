@@ -7,19 +7,23 @@ export declare class Testbench {
     testbenchStatements: Object[];
     testbenchResults: Object[];
     delay: (ms: number) => Promise<unknown>;
-    clockFreqInTicks: number;
     clockRisingEdgeListeners: (() => void)[];
     clockFallingEdgeListeners: (() => void)[];
     fullRun: boolean;
     iterationCallback: (row: types.TestbenchRow) => void;
     clockTick: number;
+    clockDevice: types.IODevice;
+    tbClockCycleInTicks: number;
+    DEFAULT_CLOCK_CYCLE_TICKS: number;
     constructor(iterationCallback: (row: types.TestbenchRow) => void);
     setStatements(statements: Object[]): void;
     setIoDevices(ioDevices: types.IODevice[]): void;
+    findClockDevice(ioDevices: types.IODevice[]): types.IODevice;
     subscribe(event: string, callback: () => void): void;
     trigger(event: string): void;
     setCircuit(circuit: digitaljs.Circuit): void;
     setIOButtonValue(button: HTMLElement, bool: boolean): void;
+    setClockFreqTicks(clockDevice: types.IODevice, freqInTicks: number): void;
     setIONumValue(numvalue: HTMLElement, hexval: string): void;
     getIOLampValue(lamp: HTMLElement): "0x1" | "0x0";
     getIONumValueOut(numvalue_out: HTMLElement): string;
@@ -31,4 +35,5 @@ export declare class Testbench {
     genResultTableRow(inputs: types.NameVal[], tbResults: types.TestbenchOutputResult[]): types.TestbenchRow;
     runTestbench(successDeferred: JQueryDeferred<void>, runningPromise: JQueryPromise<void>): Promise<void>;
     failed(successDeferred: JQueryDeferred<void>): void;
+    finishTb(isSuccess: boolean): void;
 }

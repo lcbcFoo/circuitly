@@ -132,7 +132,6 @@ $(window).on("load", () => {
 
     function updateUi() {
         let circuitCreated = !(circuit == undefined);
-        console.log(circuitCreated);
         if (circuitCreated) {
             $("#monitorbox").show();
             $(".digitaljs-area").show();
@@ -274,7 +273,7 @@ $(window).on("load", () => {
         // testbench is run later
         // TODO: better way to wait for digitaljs load circuit into UI
         let delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-        await delay(2000);
+        await delay(1000);
         let devs = identifyCircuitElements(data);
         testbench.setIoDevices(devs);
         testbench.setCircuit(circuit);
@@ -283,7 +282,6 @@ $(window).on("load", () => {
 
     function runquery() {
         const data = myUpdateFunction();
-        console.log(data);
         const opts = { optimize: false, fsm: false, fsmexpand: false };
         // TODO: get necessary SV files for used models or include them in
         // blockly code generator
@@ -388,12 +386,10 @@ $(window).on("load", () => {
         console.log("onclick");
         // Create File Reader event listener function
         var parseInputXMLfile = function(e: Event) {
-            console.log("parseInputXMLfile");
             var xmlFile = (<HTMLInputElement>e.target).files[0];
 
             var reader = new FileReader();
             reader.onload = function() {
-                console.log("reader onload");
                 try {
                     ///////////////////////////////////////////////////////////
                     // TODO check next Blockly version cf issue
@@ -405,7 +401,6 @@ $(window).on("load", () => {
                     Blockly.FieldDropdown.prototype.doClassValidation_ = function(
                         newValue: any
                     ) {
-                        console.log(newValue);
                         return newValue;
                     };
 
@@ -586,7 +581,12 @@ $(window).on("load", () => {
                 typeofelement = "numvalue_out";
                 element = child;
                 ioType = "output";
-                // This is not an IO component
+            } else if (celltype === "$clock") {
+                let child = $(parentElement).find('input')[0];
+                typeofelement = "$clock";
+                element = child;
+                ioType = "clock";
+            // This is not an IO component
             } else {
                 continue;
             }
@@ -680,6 +680,9 @@ $(window).on("load", () => {
         .off();
 
     // if (window.location.hash.slice(1)) window.onpopstate();
+
+    // Expose testbench as window object so it can be accessed by puppeteer
+    (<any>window).testbench = testbench;
 
     //////////////////////////////////////////////////////////////////////////////////
 });
