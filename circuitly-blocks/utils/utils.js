@@ -23,6 +23,7 @@ export const COLOUR_16BIT = 170;
 export const COLOUR_32BIT = 150;
 export const COLOUR_64BIT = 130;
 export const COLOUR_ASSIGN = 200;
+export const COLOUR_BITS_SELECT = 200;
 
 export const signalTypesDefinitions = [
     {'type' : 'SIGNAL_1BIT', 'val' : SIGNAL_1BIT, 'colour' : COLOUR_1BIT},

@@ -7,6 +7,7 @@ import { load as connections_designer_load } from './blocks/connections_designer
 import { load as splitter_loader } from './blocks/splitter/splitter.js'
 import { load as concat_loader } from './blocks/concat/concat.js'
 import { load as assign_loader } from './blocks/assign/assign.js'
+import { load as bits_select_loader } from './blocks/bits_select/bits_select.js'
 import { load as NAND_loader } from './blocks/NAND/NAND.js'
 
 //////////////////////////////////////////////////////////////////////////////
@@ -55,6 +56,7 @@ connections_designer_load(workspace);
 splitter_loader(workspace);
 concat_loader(workspace);
 assign_loader(workspace);
+bits_select_loader(workspace);
 NAND_loader(workspace);
 
 // TODO: this should be able to search for logic models in logic directory
