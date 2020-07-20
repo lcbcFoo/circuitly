@@ -21,7 +21,7 @@
     "bootstrap": "^4.5.0",
     "bootstrap4": "0.0.1-security",
     "clipboard": "^2.0.4",
-    "codemirror": "^5.48.2",
+    "codemirror": "^5.56.0",
     "csv-parser": "^2.3.3",
     "digitaljs": "0.5.2",
     "express": "^4.17.1",
@@ -35,13 +35,13 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^3.0.3",
     "ts-loader": "^7.0.5",
-    "typescript": "^3.9.5",
+    "typescript": "^3.9.7",
     "xmlhttprequest": "^1.8.0",
     "yosys2digitaljs": "^0.1.8"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@types/jquery": "^3.3.38",
+    "@babel/core": "^7.10.5",
+    "@types/jquery": "^3.5.0",
     "@types/yargs": "^15.0.5",
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^2.0.2",
@@ -57,8 +57,8 @@
     "sass-loader": "^7.3.1",
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
-    "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },
   "description": ""
