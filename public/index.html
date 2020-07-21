@@ -196,21 +196,10 @@
                 </div>
             </div>
         </div>
-        <script src="../blockly/blockly_compressed.js"></script>
-        <script src="../blockly/blocks_compressed.js"></script>
-        <script src="../blockly/javascript_compressed.js"></script>
-        <script src="../blockly/python_compressed.js"></script>
-        <script src="../blockly/msg/js/en.js"></script>
         <!-- Load circuitly after Blockly -->
         <script>
             global = globalThis // Fix missing global
         </script>
-        <script src="../circuitly-blocks/loader.js"
-                id="circuitly-loader" 
-                type="module"
-                blockly_div="blockly-div"
-                workspace_id="lesson_00_workspace"
-                toolbox_id="lesson_00_toolbox"></script>
         <script src="../dist/main.js"></script>
     </body>
 </html>
