@@ -10,6 +10,9 @@ import fileReaderStream from "filereader-stream";
 import * as types from "./types/types";
 import { Testbench } from "./testbench/testbench";
 import "bootstrap/dist/css/bootstrap.min.css";
+import * as Blockly from 'blockly/core';
+import 'blockly/python';
+import '../../circuitly-blocks/loader.js'
 
 //import { saveAs } from 'file-saver';
 
@@ -45,7 +48,7 @@ $(window).on("load", () => {
     // document.querySelector('#run').addEventListener('click', runCode);
     function myUpdateFunction() {
         let workspace = Blockly.getMainWorkspace();
-        let topBlocks: any[] = workspace.getTopBlocks();
+        let topBlocks: any[] = workspace.getTopBlocks(false);
         let svDependencies: any[] = [];
         // Update allConnections
         allConnections = [];
@@ -87,7 +90,7 @@ $(window).on("load", () => {
             let data = globalFileData;
             svFiles[name + ".sv"] = data;
         }
-        let code = Blockly.Python.workspaceToCode(workspace);
+        let code = Blockly['Python'].workspaceToCode(workspace);
         svFiles["_input.sv"] = code;
         return svFiles;
     }
@@ -383,7 +386,6 @@ $(window).on("load", () => {
     }
 
     $("button[name=load_block]").click(() => {
-        console.log("onclick");
         // Create File Reader event listener function
         var parseInputXMLfile = function(e: Event) {
             var xmlFile = (<HTMLInputElement>e.target).files[0];
@@ -404,7 +406,7 @@ $(window).on("load", () => {
                         return newValue;
                     };
 
-                    var dom = Blockly.Xml.textToDom(reader.result);
+                    var dom = Blockly.Xml.textToDom(<string>reader.result);
                     Blockly.Xml.domToWorkspace(dom, Blockly.getMainWorkspace());
 
                     Blockly.FieldDropdown.prototype.doClassValidation_ = fieldDropdownDoClassValidation_;
@@ -443,7 +445,7 @@ $(window).on("load", () => {
                         return newValue;
                     };
 
-                    var dom = Blockly.Xml.textToDom(reader.result);
+                    var dom = Blockly.Xml.textToDom(<string>reader.result);
                     Blockly.Xml.clearWorkspaceAndLoadFromXml(
                         dom,
                         Blockly.getMainWorkspace()
@@ -529,8 +531,6 @@ $(window).on("load", () => {
     }): types.IODevice[] {
         let ioDevices: types.IODevice[] = [];
         for (let [key, value] of Object.entries(data["devices"])) {
-            console.log(key);
-            console.log(value);
             let celltype: string = <string>value["celltype"];
             let net: string = value["net"];
             let label: string = value["label"];

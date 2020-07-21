@@ -34,9 +34,6 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: [{
                     loader: 'ts-loader',
-                    options: {
-                        configFile: "tsconfig.json"
-                    }
                 }],
                 exclude: /node_modules/
             },
@@ -46,8 +43,8 @@ module.exports = {
         extensions: [ '.tsx', '.ts', '.js' ],
     },
     devServer: {
-        host: '0.0.0.0',
-        port: 80,
+//        host: '0.0.0.0',
+        port: 3000,
         open: true,
         proxy: {
             "/api": "http://localhost:8080"
