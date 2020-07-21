@@ -1,3 +1,5 @@
+import * as Blockly from 'blockly/core';
+import 'blockly/python';
 // Define signal size constants
 export const SIGNAL_INVALID = -1;
 export const SIGNAL_1BIT = 0;

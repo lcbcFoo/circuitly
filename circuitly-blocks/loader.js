@@ -1,3 +1,5 @@
+import Blockly from 'blockly';
+import 'blockly/python';
 import  * as utils  from './utils/utils.js'
 import { load as module_load } from './blocks/module/module.js';
 import { load as module_connection_load } from './blocks/module_connection/module_connection.js';
@@ -13,11 +15,9 @@ import { load as NAND_loader } from './blocks/NAND/NAND.js'
 //////////////////////////////////////////////////////////////////////////////
 // Blockly setup
 
-// Get script inputs
-var thisScript = document.getElementById('circuitly-loader');
-var blocklyDiv = thisScript.getAttribute('blockly_div');
-var workspaceId = thisScript.getAttribute('workspace_id');
-var toolboxId = thisScript.getAttribute('toolbox_id');
+var blocklyDiv="blockly-div"
+var workspaceId="lesson_00_workspace"
+var toolboxId="lesson_00_toolbox"
 
 // Get toolbox and workspace
 var toolbox = document.getElementById(toolboxId);
