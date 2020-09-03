@@ -30,7 +30,7 @@
     "concurrently": "^4.1.2",
     "css-loader": "^2.1.1",
     "csv-parser": "^2.3.3",
-    "digitaljs": "0.5.2",
+    "digitaljs": "github:lcbcfoo/digitaljs",
     "expose-loader": "^0.7.5",
     "express": "^4.17.1",
     "file-loader": "^3.0.1",
@@ -54,7 +54,7 @@
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
     "xmlhttprequest": "^1.8.0",
-    "yosys2digitaljs": "^0.1.8"
+    "yosys2digitaljs": "^0.2.3"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^2.0.2",
