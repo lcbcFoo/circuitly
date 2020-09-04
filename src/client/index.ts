@@ -1,30 +1,38 @@
 "use strict";
 
+import * as Blockly from "blockly/core";
+import "blockly/python";
 import JQuery from "jquery";
 import * as digitaljs from "digitaljs";
 import "./scss/app.scss";
-import * as utils from "../../circuitly-blocks/utils/utils.js";
+// TODO: better way to expose utils
+import * as utils from "circuitly-blocks/lib/utils/utils";
+import * as CircuitlyBlocks from "circuitly-blocks";
 import FileSaver from "file-saver";
 import csv from "csv-parser";
 import fileReaderStream from "filereader-stream";
 import * as types from "./types/types";
 import { Testbench } from "./testbench/testbench";
 import "bootstrap/dist/css/bootstrap.min.css";
-import * as Blockly from 'blockly/core';
-import 'blockly/python';
-import '../../circuitly-blocks/loader.js'
 
 //import { saveAs } from 'file-saver';
 
 $(window).on("load", () => {
-    var globalFileData = "";
+    // Prepare Circuitly blocks
+    CircuitlyBlocks.prepareCircuitlyBlocks(
+        "blockly-div",
+        "lesson_00_workspace",
+        "lesson_00_toolbox"
+    );
+
+    let globalFileData = "";
     function readTextFile(file: string) {
         var rawFile = new XMLHttpRequest();
         rawFile.open("GET", file, false);
         rawFile.onreadystatechange = function() {
             if (rawFile.readyState === 4) {
                 if (rawFile.status === 200 || rawFile.status == 0) {
-                    var allText = rawFile.responseText;
+                    let allText = rawFile.responseText;
                     globalFileData = allText;
                 }
             }
@@ -34,7 +42,7 @@ $(window).on("load", () => {
 
     //////////////////////////////////////////////////////////////////////////////////
     // Move to circuitly in future
-    var allConnections = null;
+    let allConnections = null;
 
     /***/
     let testbench: Testbench = new Testbench(appendTestbenchRow);
@@ -84,13 +92,14 @@ $(window).on("load", () => {
         let svFiles: { [id: string]: string } = {};
         for (let i = 0; i < filtered.length; i++) {
             let name: string = filtered[i];
+            // TODO: better dependencies search
             let file =
-                "../../circuitly-blocks/logic/" + name + "/" + name + ".sv";
+                "../../node_modules/circuitly-blocks/system-verilog-sources/" + name + ".sv";
             readTextFile(file);
             let data = globalFileData;
             svFiles[name + ".sv"] = data;
         }
-        let code = Blockly['Python'].workspaceToCode(workspace);
+        let code = Blockly["Python"].workspaceToCode(workspace);
         svFiles["_input.sv"] = code;
         return svFiles;
     }
@@ -478,19 +487,17 @@ $(window).on("load", () => {
     function destroyTestbench() {
         $("#tb-result-table").remove();
         $("#tb-result-summary").hide();
-
     }
 
     function recreateTbResultTableDiv(rowSample: types.TestbenchRow) {
         destroyTestbench();
-        let tableMarkup = 
-            '<table id="tb-result-table" class="table">';
+        let tableMarkup = '<table id="tb-result-table" class="table">';
         tableMarkup += '<thead id="tb-result-thead"><tr>';
-        rowSample.inputs.forEach((input) => {
-            tableMarkup += '<th scope="col">in ' + input.name + '</th>'; 
+        rowSample.inputs.forEach(input => {
+            tableMarkup += '<th scope="col">in ' + input.name + "</th>";
         });
-        rowSample.tbResults.forEach((result) => {
-            tableMarkup += '<th scope="col">out ' + result.signalName + '</th>';
+        rowSample.tbResults.forEach(result => {
+            tableMarkup += '<th scope="col">out ' + result.signalName + "</th>";
         });
         tableMarkup += '</tr></thead><tbody id="tb-tbody"></tbody></table>';
         $("#testbench-result-wrapper").append(tableMarkup);
@@ -503,21 +510,20 @@ $(window).on("load", () => {
             needToRecreateTable = false;
         }
         let markup = "<tr>";
-        row.inputs.forEach((input) => {
+        row.inputs.forEach(input => {
             markup += "<td>" + input.val + "</td>";
         });
-        row.tbResults.forEach((result) => {
-            let cls = '';
-            let title = '';
-            if (result.success){
-                cls = 'result-success';
-                title = 'correct';
+        row.tbResults.forEach(result => {
+            let cls = "";
+            let title = "";
+            if (result.success) {
+                cls = "result-success";
+                title = "correct";
+            } else {
+                cls = "result-error";
+                title = "Error: " + result.failDescription;
             }
-            else {
-                cls = 'result-error';
-                title = 'Error: ' + result.failDescription;
-            }
-            markup += '<td class="' + cls + '" title="' + title +'">';
+            markup += '<td class="' + cls + '" title="' + title + '">';
             markup += result.value + "</td>";
         });
         markup += "</tr>";
@@ -582,11 +588,11 @@ $(window).on("load", () => {
                 element = child;
                 ioType = "output";
             } else if (celltype === "$clock") {
-                let child = $(parentElement).find('input')[0];
+                let child = $(parentElement).find("input")[0];
                 typeofelement = "$clock";
                 element = child;
                 ioType = "clock";
-            // This is not an IO component
+                // This is not an IO component
             } else {
                 continue;
             }
@@ -643,14 +649,14 @@ $(window).on("load", () => {
 
         successDeferred.done(function() {
             console.log("Testbench passed");
-            $('#tb-result-summary').addClass("summary-passed");
+            $("#tb-result-summary").addClass("summary-passed");
             $("#tb-result-summary").text("Testbench passed!");
             $("#tb-result-summary").prop("disabled", false);
             runningTb.resolve();
         });
         successDeferred.fail(function() {
             console.log("Testbench failed");
-            $('#tb-result-summary').addClass("summary-failed");
+            $("#tb-result-summary").addClass("summary-failed");
             $("#tb-result-summary").text("Testbench failed!");
             $("#tb-result-summary").prop("disabled", false);
             runningTb.reject();
