@@ -30,6 +30,8 @@ export class Testbench {
     setIoDevices(ioDevices: types.IODevice[]) {
         this.ioDevices = ioDevices;
         this.clockDevice = this.findClockDevice(ioDevices);
+        console.log(this.ioDevices);
+        console.log(this.clockDevice);
     }
 
     findClockDevice(ioDevices: types.IODevice[]): types.IODevice {
@@ -141,7 +143,9 @@ export class Testbench {
     /* Return '1' if lamp is high, '0' otherwise
      */
     getIOLampValue(lamp: HTMLElement) {
-        return $(lamp).hasClass("live") ? "0x1" : "0x0";
+        let onColor = "#03c03c";
+        let offColor = "#fc7c68";
+        return $(lamp).attr("fill") === onColor ? "0x1" : "0x0";
     }
 
     /* Return value showing in numvalue_out element (assuming it is
@@ -162,6 +166,9 @@ export class Testbench {
             let device = this.ioDevices.find(function(device) {
                 return device.label === name && device.ioType === "input";
             });
+            console.log(this.ioDevices);
+            console.log(inputConnection);
+            console.log(device);
             // Check if input actually exists and is loaded, if not just
             // ignore testbench input entry
             if (device) {

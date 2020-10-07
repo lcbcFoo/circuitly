@@ -535,9 +535,10 @@ $(window).on("load", () => {
     function identifyCircuitElements(data: {
         [id: string]: types.Device;
     }): types.IODevice[] {
+        console.log(data);
         let ioDevices: types.IODevice[] = [];
         for (let [key, value] of Object.entries(data["devices"])) {
-            let celltype: string = <string>value["celltype"];
+            let celltype: string = <string>value["type"];
             let net: string = value["net"];
             let label: string = value["label"];
             let bits: number = value["bits"];
@@ -551,7 +552,7 @@ $(window).on("load", () => {
             // Get label parent
             let parentElement = $(textElement[0]).parent()[0];
             // Identify the celltype
-            if (celltype === "$button") {
+            if (celltype === "Button") {
                 let child = $(parentElement)
                     .children("rect")
                     .filter(function() {
@@ -560,7 +561,7 @@ $(window).on("load", () => {
                 typeofelement = "btnface";
                 element = child;
                 ioType = "input";
-            } else if (celltype === "$lamp") {
+            } else if (celltype === "Lamp") {
                 let child = $(parentElement)
                     .children("circle")
                     .filter(function() {
@@ -569,16 +570,16 @@ $(window).on("load", () => {
                 typeofelement = "led";
                 element = child;
                 ioType = "output";
-            } else if (celltype === "$numentry") {
+            } else if (celltype === "NumEntry") {
                 let child = $(parentElement)
-                    .find("input")
-                    .filter(function() {
-                        return $(this).hasClass("numvalue");
-                    })[0];
+                    .find("input")[0]
+                    // .filter(function() {
+                    //     return $(this).hasClass("numvalue");
+                    // })[0];
                 typeofelement = "numvalue";
                 element = child;
                 ioType = "input";
-            } else if (celltype === "$numdisplay") {
+            } else if (celltype === "NumDisplay") {
                 let child = $(parentElement)
                     .children("text")
                     .filter(function() {
@@ -587,7 +588,7 @@ $(window).on("load", () => {
                 typeofelement = "numvalue_out";
                 element = child;
                 ioType = "output";
-            } else if (celltype === "$clock") {
+            } else if (celltype === "Clock") {
                 let child = $(parentElement).find("input")[0];
                 typeofelement = "$clock";
                 element = child;
