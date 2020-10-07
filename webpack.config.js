@@ -1,3 +1,5 @@
+const HOST = process.env.HOST || "127.0.0.1";
+
 module.exports = {
     entry: "./src/client/index.ts",
     devtool: "source-map",
@@ -48,6 +50,7 @@ module.exports = {
         open: true,
         proxy: {
             "/api": "http://localhost:8080"
-        }
+        },
+        host: HOST
     }
 };
