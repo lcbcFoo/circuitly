@@ -14,8 +14,8 @@ export class Testbench {
     clockTick: number = 0;
     // For now only supports a single clock
     clockDevice: types.IODevice = null;
-    tbClockCycleInTicks: number = 50;
-    DEFAULT_CLOCK_CYCLE_TICKS: number = 200;
+    tbClockCycleInTicks: number = 200;
+    DEFAULT_CLOCK_CYCLE_TICKS: number = 100;
 
     constructor(iterationCallback: (row: types.TestbenchRow) => void) {
         this.iterationCallback = iterationCallback;
@@ -91,15 +91,20 @@ export class Testbench {
             if (this.clockTick === 0) {
                 return;
             }
-            if (this.clockTick % this.tbClockCycleInTicks === 0) {
+            if ((this.clockTick - this.DEFAULT_CLOCK_CYCLE_TICKS)
+                % (2 * this.tbClockCycleInTicks) === 0) {
                 // rising-edge
+                console.log(this.clockTick);
+                console.log('rising edge');
                 this.trigger("risingEdge");
             }
             if (
-                this.clockTick % this.tbClockCycleInTicks ===
-                this.tbClockCycleInTicks / 2
+                (this.clockTick - this.DEFAULT_CLOCK_CYCLE_TICKS)
+                 % (2 * this.tbClockCycleInTicks) === this.tbClockCycleInTicks
             ) {
                 // falling-edge
+                console.log(this.clockTick);
+                console.log('falling edge');
                 this.trigger("fallingEdge");
             }
         });
@@ -128,7 +133,7 @@ export class Testbench {
     setClockFreqTicks(clockDevice: types.IODevice, freqInTicks: number) {
         if (clockDevice) {
             // We must divide by 2 since the input is related to half-cycle
-            $(clockDevice.element).val(Math.round(freqInTicks / 2));
+            $(clockDevice.element).val(Math.round(freqInTicks));
             $(clockDevice.element).trigger("change");
         }
     }
@@ -413,7 +418,7 @@ export class Testbench {
         // it initializes the circuit signals
         this.circuit.start();
         await waitClockCycle();
-        
+
         // Run testbench statements and collect results produced
         for (let i = 0; i < timedInputs.length; i++) {
             // Check if testbench was cancelled
