@@ -7,7 +7,7 @@
     "start": "node src/server/index.js",
     "build": "webpack --mode production",
     "server": "nodemon src/server/index.js",
-    "client": "webpack-dev-server --allowSyntheticDefaultImports --mode development --devtool inline-source-map --hot --no-open",
+    "client": "webpack-dev-server --allowSyntheticDefaultImports --mode production --devtool inline-source-map --hot",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "true"
   },
