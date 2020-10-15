@@ -14,7 +14,7 @@ RUN pacman -S --noconfirm \
 # Clone Circuitly on docker-build branch
 RUN git clone https://github.com/lcbcFoo/circuitly.git
 WORKDIR /home/app/circuitly
-RUN git checkout docker-build
+RUN git checkout fix-docker
 
 # Install npm dependencies
 RUN npm install
