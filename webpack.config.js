@@ -47,7 +47,7 @@ module.exports = {
         port: 80,
         open: true,
         proxy: {
-            "/api": "http://localhost:8080"
+            "/api": "http://0.0.0.0:8080"
         },
         disableHostCheck: true
     }

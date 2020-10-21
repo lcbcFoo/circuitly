@@ -25,4 +25,5 @@ EXPOSE 885
 EXPOSE 3001
 
 # Startup server
-CMD npm run build && npm run-script dev
+RUN npm run build
+CMD ["npm", "run-script", "dev"]
