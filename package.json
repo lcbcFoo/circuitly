@@ -7,7 +7,7 @@
     "start": "node src/server/index.js",
     "build": "webpack --mode production",
     "server": "nodemon src/server/index.js",
-    "client": "webpack-dev-server --allowSyntheticDefaultImports --mode production",
+    "client": "webpack-dev-server --host 0.0.0.0 --port 80 --open --allowSyntheticDefaultImports --mode production",
     "dev": "concurrently \"npm run start\" \"npm run client\"",
     "test": "true"
   },
