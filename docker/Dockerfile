@@ -20,9 +20,9 @@ RUN git checkout docker-build
 RUN npm install
 
 # Expose ports
-EXPOSE 3000:80
-EXPOSE 885
-EXPOSE 3001
+EXPOSE 80
+EXPOSE 8080
+EXPOSE 3000
 
 # Startup server
 RUN npm run build
