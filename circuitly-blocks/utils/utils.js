@@ -41,7 +41,7 @@ export const signalTypesDefinitions = [
 export const reservedTypes = [
     'module', 'splitter', 'concat', 'NAND', 'signal_getter',
     'connections_designer', 'create_signal', 'module_connection',
-    'assign'
+    'assign', 'bits_select'
 ];
 
 // Receives a 'type' of signal - for example string "SIGNAL_1BIT"
